@@ -470,3 +470,18 @@ a.btn.primary{color:var(--accent-ink)}
   .tabs .copy,.reveal{transition:none}
   .hc-b:hover{transform:none}
 }
+
+/* Sidebar: indicatore del giorno attivo che scorre (clip-path, 250ms ease-in-out) */
+.dayl{position:relative}
+.dayi{position:absolute;inset:0;pointer-events:none;display:none}
+.dayl[data-ind] .dayi{display:block}
+.dayi-ring{background:var(--line)}
+.dayi-fill{background:var(--surface)}
+.dayl[data-ready] .dayi{transition:clip-path 250ms var(--ease-in-out)}
+.dayl .dayb{position:relative}
+.dayl[data-ind] .dayb[aria-current="page"]{background:none;box-shadow:none}
+@media (hover:hover) and (pointer:fine){ .dayl[data-ind] .dayb[aria-current="page"]:hover{background:none} }
+/* pallino "fatto": il progresso si vede succedere */
+.dayb .c{transition:background-color 200ms ease,border-color 200ms ease}
+@media (max-width:860px){ .dayl[data-ind] .dayi{display:none} .dayl[data-ind] .dayb[aria-current="page"]{background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)} }
+@media (prefers-reduced-motion: reduce){ .dayl[data-ready] .dayi,.dayb .c{transition:none} }
