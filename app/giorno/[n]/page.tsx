@@ -4,7 +4,7 @@ import { readSkill, sliceMd, chunks } from "@/lib/skills";
 import { renderMd } from "@/lib/markdown";
 import { DayTransition } from "@/components/DayTransition";
 import { ViewSwitch } from "@/components/ViewSwitch";
-import { DemoSlot } from "@/components/DemoSlot";
+import { Demo } from "@/components/demos";
 import { DayFooter } from "@/components/DayFooter";
 
 export function generateStaticParams() {
@@ -49,13 +49,13 @@ export default async function DayPage(props: PageProps<"/giorno/[n]">) {
       d.demos.forEach(([id, after], di) => {
         if (!used.has(di) && c.h && c.h.startsWith(after)) {
           used.add(di);
-          formatted.push(<DemoSlot key={`d${di}`} id={id} />);
+          formatted.push(<Demo key={`d${di}`} id={id} />);
         }
       });
     });
   });
   d.demos.forEach(([id], di) => {
-    if (!used.has(di)) formatted.push(<DemoSlot key={`d${di}`} id={id} />);
+    if (!used.has(di)) formatted.push(<Demo key={`d${di}`} id={id} />);
   });
 
   const files = [...new Set(d.read.map((r) => r.f.replace("skills/", "")))];
