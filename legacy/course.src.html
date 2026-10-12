@@ -1,0 +1,2033 @@
+<title>Motion in 14 giorni</title>
+<meta name="description" content="Corso di 14 giorni sulle skill di Emil Kowalski: testo originale, demo live dentro la lettura, laboratorio ed esercizi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sidebar con i 14 giorni + colonna di lettura; demo live inserite nel testo originale. */
+:root{
+  --bg:#F4F5F8; --surface:#FFFFFF; --sunken:#EBEDF2; --fg:#14161C; --muted:#5B6170; --line:#D9DCE4;
+  --accent:#2E43F0; --accent-ink:#FFFFFF; --accent-soft:#E3E7FF; --good:#1D8048; --bad:#C2352A; --on-bad:#FFFFFF; --warn:#A86200;
+  --code-bg:#ECEEF3; --shadow:0 10px 30px rgb(20 22 40 / .12);
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Geist", "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --ease-out:cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out:cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer:cubic-bezier(0.32, 0.72, 0, 1);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1015; --surface:#161920; --sunken:#1D2129; --fg:#E7E9EF; --muted:#9BA2B0; --line:#2B303B;
+  --accent:#8592FF; --accent-ink:#0E1015; --accent-soft:#232A57; --good:#4DC283; --bad:#F07A6E; --on-bad:#1A0C0A; --warn:#E7A541;
+  --code-bg:#1B1F27; --shadow:0 10px 30px rgb(0 0 0 / .45); color-scheme:dark; } }
+:root[data-theme="dark"]{
+  --bg:#0E1015; --surface:#161920; --sunken:#1D2129; --fg:#E7E9EF; --muted:#9BA2B0; --line:#2B303B;
+  --accent:#8592FF; --accent-ink:#0E1015; --accent-soft:#232A57; --good:#4DC283; --bad:#F07A6E; --on-bad:#1A0C0A; --warn:#E7A541;
+  --code-bg:#1B1F27; --shadow:0 10px 30px rgb(0 0 0 / .45); color-scheme:dark; }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-body);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:10px 16px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);
+  border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font:700 17px/1 var(--f-display);letter-spacing:-0.01em;background:none;border:0;padding:0;cursor:pointer}
+.brand svg{width:26px;height:26px}
+.brand .mark-curve{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round}
+.brand .mark-box{fill:none;stroke:var(--line);stroke-width:4}
+.top-sp{flex:1}
+.prog{font:500 12px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.slow{display:inline-flex;align-items:center;gap:6px;font:500 12px var(--f-mono);color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:2px;background:var(--surface)}
+.seg button{border:0;background:none;padding:4px 9px;border-radius:7px;cursor:pointer;font:500 12px var(--f-mono);color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+.shell{display:grid;grid-template-columns:250px minmax(0,1fr);gap:0;max-width:1180px;margin:0 auto}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 53px);align-self:start;height:calc(100vh - 53px);overflow:auto;padding:18px 12px 24px 16px;border-right:1px solid var(--line)}
+.side h2{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 8px 6px}
+.dayl{display:flex;flex-direction:column;gap:2px}
+.dayb{display:grid;grid-template-columns:28px minmax(0,1fr) 16px;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:none;padding:7px 8px;border-radius:9px;cursor:pointer;color:var(--fg)}
+.dayb .n{font:500 12px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.dayb .t{font-size:14px;line-height:1.3}
+.dayb .c{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--line)}
+.dayb.done .c{background:var(--good);border-color:var(--good)}
+.dayb[aria-current="true"]{background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
+.dayb[aria-current="true"] .n{color:var(--accent)}
+@media (hover:hover) and (pointer:fine){ .dayb:hover{background:var(--sunken)} }
+.sync{margin:16px 8px 0;font-size:12px;color:var(--muted);line-height:1.4}
+
+main{min-width:0;padding-inline:16px;padding-block:28px 80px}
+.col{max-width:760px;margin:0 auto}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1.dt{font:700 clamp(30px,5vw,44px)/1.04 var(--f-display);letter-spacing:-0.025em;margin:8px 0 12px;text-wrap:balance}
+.goal{font-size:17px;line-height:1.55;max-width:62ch;margin:0 0 16px}
+.files{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.chip{font:500 12px var(--f-mono);padding:3px 8px;border-radius:6px;background:var(--sunken);color:var(--muted)}
+.before{border-left:3px solid var(--accent);padding:4px 0 4px 14px;margin:0 0 22px;color:var(--fg)}
+.before b{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
+.viewbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:26px 0 6px;padding-top:18px;border-top:1px solid var(--line)}
+.viewbar h2{font:700 22px/1.1 var(--f-display);margin:0;letter-spacing:-0.01em}
+.src{font:500 12px var(--f-mono);color:var(--muted);margin:22px 0 4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.src::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent)}
+
+.md{font-size:16px;line-height:1.68}
+.md h1{font:700 26px/1.15 var(--f-display);letter-spacing:-0.015em;margin:30px 0 10px}
+.md h2{font:700 22px/1.2 var(--f-display);letter-spacing:-0.01em;margin:34px 0 8px}
+.md h3{font:600 17px/1.3 var(--f-body);margin:26px 0 6px}
+.md h4{font:600 15px/1.3 var(--f-body);margin:20px 0 6px}
+.md p,.md li{max-width:68ch;overflow-wrap:break-word}
+.md :not(pre)>code{overflow-wrap:anywhere}
+.md code{font:0.86em var(--f-mono);background:var(--code-bg);padding:1px 5px;border-radius:5px}
+.md pre{background:var(--code-bg);padding:14px 16px;border-radius:10px;overflow:auto;font:13px/1.55 var(--f-mono)}
+.md pre code{background:none;padding:0;font-size:inherit}
+.md blockquote{margin:14px 0;padding:2px 0 2px 14px;border-left:3px solid var(--line);color:var(--muted)}
+.tw{overflow-x:auto;margin:14px 0}
+.md table{border-collapse:collapse;font-size:14px;min-width:100%}
+.md th,.md td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+.md th{background:var(--sunken);font-weight:600}
+.md hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+.xref{font:0.9em var(--f-mono);color:var(--muted)}
+pre.raw{white-space:pre-wrap;word-break:break-word;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;font:13px/1.6 var(--f-mono);overflow:auto}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;font-weight:500;font-size:14px;
+  transition:transform 160ms var(--ease-out);user-select:none;-webkit-user-select:none}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.small{padding:5px 10px;font-size:13px}
+.btn.nopress{transition:none}.btn.nopress:active{transform:none}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+
+/* demo */
+.demo{border:1px solid var(--line);background:var(--surface);border-radius:14px;margin:22px 0;overflow:hidden}
+.demo-head{padding:11px 16px;display:flex;gap:6px 10px;align-items:baseline;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.demo-tag{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.demo-title{font-weight:600}
+.demo-rule{font:12px var(--f-mono);color:var(--muted);flex-basis:100%}
+.demo-body{padding:16px}
+.demo-note{padding:10px 16px;margin:0;color:var(--muted);font-size:13px;border-top:1px solid var(--line);background:var(--sunken)}
+.ab{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.ab>.p{border:1px dashed var(--line);border-radius:10px;padding:12px;min-height:170px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px;align-items:flex-start;min-width:0}
+.lab-l{font:500 12px var(--f-mono);color:var(--muted)}
+.lab-l .x{color:var(--bad)}.lab-l .v{color:var(--good)}.lab-l .m{color:var(--warn)}
+.out{font:12px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:14px;font-size:13px}
+.ctl label{display:inline-flex;align-items:center;gap:8px}
+.ctl input[type=range]{width:160px;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent)}
+
+.pop{position:absolute;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:6px;width:170px;z-index:2}
+.pop div{padding:6px 8px;border-radius:6px;font-size:13px}
+.pop div+div{margin-top:1px}
+
+/* gallery */
+.g-stage{height:150px;border-radius:10px;background:var(--sunken);display:grid;place-items:center;margin-bottom:12px;position:relative}
+.g-box{width:64px;height:64px;border-radius:16px;background:var(--accent)}
+.g-dots{position:absolute;bottom:14px;display:flex;gap:8px}
+.g-dots i{width:10px;height:10px;border-radius:50%;background:var(--fg);opacity:.25}
+
+/* palette */
+.pal{width:100%;max-width:220px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);padding:8px;opacity:0;transform:scale(.96) translateY(-4px);pointer-events:none}
+.pal.open{opacity:1;transform:none}
+.pal-anim{transition:opacity 250ms ease,transform 250ms ease}
+.pal .q{font-size:13px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.pal .r{font-size:13px;padding:6px 8px;border-radius:6px}
+.pal .r:first-of-type{background:var(--sunken)}
+
+/* quiz */
+.qz{display:flex;flex-direction:column;gap:8px}
+.qz-row{display:grid;grid-template-columns:minmax(0,1fr) 210px 22px;gap:10px;align-items:center;padding:8px 10px;border-radius:9px;background:var(--sunken)}
+.qz-row select{padding:6px 8px;border-radius:7px;border:1px solid var(--line);background:var(--surface)}
+.qz-row .mk{font-weight:600}
+.qz-row .mk.ok{color:var(--good)}.qz-row .mk.no{color:var(--bad)}
+.qz-row .sol{grid-column:1/-1;font-size:13px;color:var(--muted)}
+@media (max-width:560px){ .qz-row{grid-template-columns:minmax(0,1fr) 22px} .qz-row select{grid-column:1} }
+
+/* curves */
+.curve{width:84px;height:84px;overflow:visible}
+.curve .d{stroke:var(--line);stroke-width:1.5;fill:none;stroke-dasharray:3 3}
+.curve .c{stroke:var(--accent);stroke-width:3;fill:none;stroke-linecap:round}
+.curve .ax{stroke:var(--line);stroke-width:1;fill:none}
+.drop{position:relative;width:100%;height:120px}
+.drop .pop{top:0;left:0;transform-origin:top left;opacity:0;transform:scale(.92)}
+.drop .pop.open{opacity:1;transform:none}
+
+/* spinner */
+.spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* spring lab */
+.sp-plot{width:100%;height:140px;background:var(--sunken);border-radius:10px;display:block}
+.sp-plot .tg{stroke:var(--line);stroke-dasharray:4 4;stroke-width:1}
+.sp-plot .ln{stroke:var(--accent);stroke-width:2.5;fill:none}
+.sp-plot text{fill:var(--muted);font:10px var(--f-mono)}
+.track{position:relative;height:44px;border-radius:22px;background:var(--sunken);margin:12px 0;width:100%}
+.ball{position:absolute;top:8px;left:8px;width:28px;height:28px;border-radius:50%;background:var(--accent)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+
+/* tilt */
+.tilt-wrap{perspective:700px;width:100%;display:grid;place-items:center;padding:10px 0;touch-action:pan-y}
+.tilt{width:150px;height:100px;border-radius:14px;background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 40%,var(--surface)));box-shadow:var(--shadow);display:grid;place-items:center;color:var(--accent-ink);font:600 13px var(--f-mono)}
+
+/* interrupt rows */
+.ir{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center;margin-bottom:8px}
+.ir .track{margin:0;height:34px}
+.ir .ball{top:5px;left:5px;width:24px;height:24px}
+
+/* tooltips */
+.tt-bar{display:flex;gap:4px;margin-top:34px;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.tt-btn{position:relative;width:34px;height:34px;border:0;border-radius:7px;background:none;cursor:pointer;font:600 14px var(--f-mono)}
+@media (hover:hover) and (pointer:fine){ .tt-btn:hover{background:var(--sunken)} }
+.tt{position:absolute;bottom:calc(100% + 8px);left:50%;white-space:nowrap;background:var(--fg);color:var(--bg);font:500 12px var(--f-body);padding:4px 8px;border-radius:6px;pointer-events:none;
+  opacity:0;transform:translateX(-50%) scale(.97);transform-origin:bottom center;transition:opacity 125ms var(--ease-out),transform 125ms var(--ease-out)}
+.tt.on{opacity:1;transform:translateX(-50%) scale(1)}
+.tt.instant{transition-duration:0ms}
+
+/* toasts */
+.ts-area{position:relative;width:100%;height:150px}
+.ts{position:absolute;left:0;right:0;bottom:6px;padding:10px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);font-size:13px;transform-origin:bottom center}
+.ts-tr{transition:transform 400ms ease,opacity 400ms ease}
+.ss-area{position:relative;height:90px;width:100%;overflow:hidden;border-radius:10px;background:var(--sunken)}
+.ss-toast{position:absolute;left:10px;right:10px;bottom:10px;padding:10px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:13px;
+  opacity:1;transform:translateY(0);transition:opacity 400ms ease,transform 400ms ease}
+@starting-style{ .ss-toast{opacity:0;transform:translateY(100%)} }
+.ss-toast.out{opacity:0;transform:translateY(100%)}
+
+/* crossfade */
+.xf{display:grid;width:150px;padding:9px 0;border-radius:9px;border:1px solid var(--line);background:var(--surface);cursor:pointer;justify-items:center}
+.xf>span{grid-area:1/1;transition:opacity 200ms ease,filter 200ms ease}
+.xf>span.off{opacity:0}
+.xf.blur>span.off{filter:blur(2px)}
+.xf.blur{transition:transform 160ms var(--ease-out)}.xf.blur:active{transform:scale(.97)}
+
+/* phones / drawers */
+.phone{position:relative;width:100%;max-width:240px;height:220px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--sunken)}
+.phone.tall{height:340px;max-width:280px}
+.drawer{position:absolute;left:0;right:0;bottom:0;padding:10px 16px 16px;background:var(--surface);border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgb(0 0 0 / .14);font-size:13px}
+.drawer p{margin:4px 0}
+.handle{width:36px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 8px}
+
+/* orbit */
+.orbit{position:relative;height:170px;perspective:600px;transform-style:preserve-3d;border-radius:10px;background:var(--sunken)}
+.orbit .center{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--fg);opacity:.85}
+.orbit .moon{position:absolute;left:50%;top:50%;width:18px;height:18px;border-radius:50%;background:var(--accent);animation:orbit 3s linear infinite}
+@keyframes orbit{from{transform:translate(-50%,-50%) rotateY(0deg) translateZ(72px) rotateY(360deg)}to{transform:translate(-50%,-50%) rotateY(360deg) translateZ(72px) rotateY(0deg)}}
+
+/* hold */
+.hold{position:relative;overflow:hidden;padding:12px 18px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;font-weight:500;touch-action:manipulation}
+.hold .ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bad);color:var(--on-bad);clip-path:inset(0 100% 0 0)}
+.hold-a .ov{transition:clip-path 2s linear}
+.hold-a:active .ov{clip-path:inset(0 0 0 0)}
+.hold-b{transition:transform 160ms var(--ease-out)}
+.hold-b:active{transform:scale(.97)}
+.hold-b .ov{transition:clip-path 200ms var(--ease-out)}
+.hold-b:active .ov{clip-path:inset(0 0 0 0);transition:clip-path 2s linear}
+
+/* tabs */
+.tabs{position:relative;display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:var(--sunken);max-width:100%}
+.tabs button{border:0;background:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted)}
+.tabs-a button{transition:background-color 250ms ease,color 250ms ease}
+.tabs-a button.on{background:var(--fg);color:var(--bg)}
+.tabs .copy{position:absolute;inset:0;display:flex;gap:2px;padding:3px;pointer-events:none;transition:clip-path 250ms var(--ease-in-out)}
+.tabs .copy button{background:var(--fg);color:var(--bg);border-radius:0}
+
+/* compare */
+.cmp{position:relative;width:100%;height:170px;border-radius:12px;overflow:hidden;touch-action:pan-y}
+.cmp .lay{position:absolute;inset:0;display:flex;align-items:flex-end;padding:10px;font:600 12px var(--f-mono);color:#fff;
+  background:radial-gradient(circle at 25% 35%,#ffd166 0 14%,transparent 15%),linear-gradient(160deg,#ff7b54 0%,#d62f6c 45%,#3a2a8c 100%)}
+.cmp .before{filter:grayscale(1) contrast(.85);justify-content:flex-start}
+.cmp .after{justify-content:flex-end}
+.reveal{height:130px;width:100%;border-radius:12px;background:linear-gradient(160deg,#3ac3a6,#1f6fd1 60%,#2b2a72);clip-path:inset(0 0 100% 0);transition:clip-path 600ms var(--ease-in-out)}
+.reveal.on{clip-path:inset(0 0 0 0)}
+
+/* stagger list */
+.stg{display:flex;flex-direction:column;gap:6px;width:100%}
+.stg div{padding:8px 10px;border-radius:8px;background:var(--sunken);font-size:13px}
+
+/* sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;height:72%;padding:10px 16px;background:var(--surface);border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgb(0 0 0 / .16);
+  touch-action:none;cursor:grab;transform:translateY(100%);font-size:13px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.sheet.dragging{cursor:grabbing}
+.rb{position:relative;height:56px;border-radius:12px;background:var(--sunken);width:100%;margin-bottom:10px;touch-action:pan-y}
+.rb .knob{position:absolute;top:6px;left:0;width:44px;height:44px;border-radius:12px;background:var(--accent);cursor:grab}
+.car{position:relative;width:100%;max-width:380px;height:130px;overflow:hidden;border-radius:12px;background:var(--sunken);touch-action:pan-y}
+.car-t{position:absolute;top:12px;left:12px;display:flex;gap:12px;cursor:grab}
+.car-t div{flex:0 0 160px;height:106px;border-radius:12px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font:600 22px var(--f-display);color:var(--muted)}
+
+/* panel stages */
+.stage{position:relative;width:100%;height:150px;border-radius:10px;background:var(--sunken);overflow:hidden}
+.panel{position:absolute;top:10px;right:10px;bottom:10px;width:55%;border-radius:10px;background:var(--surface);box-shadow:var(--shadow);padding:10px;font-size:13px;transform:translateX(110%)}
+
+/* material */
+.mat{position:relative;width:100%;height:220px;overflow:auto;border-radius:12px;border:1px solid var(--line);background:var(--bg)}
+.mat .bar{position:sticky;top:0;z-index:1;padding:10px 12px;font-weight:600;font-size:14px}
+.mat .op{background:var(--surface);border-bottom:1px solid var(--line)}
+.mat .gl{background:color-mix(in srgb,var(--surface) 60%,transparent);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid color-mix(in srgb,var(--line) 45%,transparent)}
+@media (prefers-reduced-transparency: reduce){ .mat .gl{background:var(--surface);backdrop-filter:none;-webkit-backdrop-filter:none} }
+.mat .tiles{display:grid;gap:8px;padding:8px 12px 12px}
+.mat .tiles div{height:70px;border-radius:10px}
+.t1{background:linear-gradient(135deg,#ff8a5b,#ffd166)}.t2{background:linear-gradient(135deg,#4cc9f0,#4361ee)}.t3{background:linear-gradient(135deg,#80ed99,#38a3a5)}
+
+/* tracking */
+.trk-h{font-family:var(--f-body);font-weight:600;margin:6px 0 4px;overflow-wrap:anywhere}
+
+/* wizard */
+.wz{display:flex;flex-direction:column;gap:6px}
+.wz-s{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:9px 10px;border-radius:9px;background:var(--sunken)}
+.wz-s .n{font:600 12px var(--f-mono);color:var(--accent)}
+.wz-s b{display:block;font-size:13px}
+.wz-s span{font-size:14px}
+.wz-s.stop{background:color-mix(in srgb,var(--bad) 14%,var(--surface))}
+.wz-s.hid span{filter:blur(5px);user-select:none}
+
+/* accordion */
+.acc{width:100%;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.acc button{width:100%;text-align:left;padding:10px 12px;border:0;background:var(--surface);cursor:pointer;font-weight:500;display:flex;justify-content:space-between}
+.acc button+div{overflow:hidden;height:0;opacity:0;transition:height 200ms var(--ease-out),opacity 200ms var(--ease-out)}
+.acc .in{padding:0 12px 12px;font-size:13px;color:var(--muted)}
+.acc .pl{display:inline-block;transition:transform 200ms var(--ease-out)}
+.acc button[aria-expanded="true"] .pl{transform:rotate(45deg)}
+.acc>div+button,.acc>button+div+button{border-top:1px solid var(--line)}
+
+/* busy */
+.busy-r{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:center;margin-bottom:8px;font-size:13px}
+.busy-r .track{margin:0;height:34px;overflow:hidden}
+.busy-r .ball{top:5px;left:5px;width:24px;height:24px}
+.mv-left{position:absolute;top:5px;width:24px;height:24px;border-radius:50%;background:var(--warn);animation:mvl 1.6s ease-in-out infinite alternate}
+@keyframes mvl{from{left:5px}to{left:calc(100% - 29px)}}
+.mv-tf{position:absolute;top:5px;left:5px;width:24px;height:24px;border-radius:50%;background:var(--good);animation:mvt 1.6s ease-in-out infinite alternate}
+@keyframes mvt{from{transform:translateX(0)}to{transform:translateX(var(--w,200px))}}
+/* animazioni infinite: partono solo se l'utente non ha chiesto meno movimento */
+.orbit .moon,.mv-left,.mv-tf{animation-play-state:paused}
+.orbit.playing .moon,.playing .mv-left,.playing .mv-tf{animation-play-state:running}
+
+/* hover cards */
+.hc{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);width:100%;transition:transform 200ms var(--ease-out)}
+/* ombra pronta su un layer a parte: si anima l'opacità, non box-shadow (che ridipinge a ogni frame) */
+.hc::after{content:"";position:absolute;inset:-1px;border-radius:inherit;box-shadow:var(--shadow);opacity:0;transition:opacity 200ms var(--ease-out);pointer-events:none}
+.hc-a:hover{transform:translateY(-4px)}.hc-a:hover::after{opacity:1}
+@media (hover:hover) and (pointer:fine){ .hc-b:hover{transform:translateY(-4px)} .hc-b:hover::after{opacity:1} }
+
+/* spot */
+.spot{display:flex;flex-direction:column;gap:12px}
+.sp-i{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface)}
+.sp-i pre{margin:0 0 10px;background:var(--code-bg);padding:10px 12px;border-radius:8px;font:12.5px/1.55 var(--f-mono);overflow:auto}
+.sp-i .seg button{font-size:12px}
+.sp-ans{margin-top:10px;font-size:13px}
+.sp-ans .tw{margin:6px 0 0}
+.sp-ans table{border-collapse:collapse;font-size:13px;min-width:100%}
+.sp-ans td,.sp-ans th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.sp-ans th{background:var(--sunken)}
+.sp-ans code{font:12px var(--f-mono)}
+.verdict{font:600 12px var(--f-mono)}
+.verdict.Blocca{color:var(--bad)}.verdict.Finding{color:var(--warn)}.verdict.Approva{color:var(--good)}
+
+/* lab, checks, notes */
+.sec{margin-top:34px;padding-top:20px;border-top:1px solid var(--line);scroll-margin-top:70px}
+.only-narrow{display:none}
+@media (max-width:860px){ .only-narrow{display:block} }
+.sec>h2{font:700 22px/1.15 var(--f-display);letter-spacing:-0.01em;margin:0 0 10px}
+.task{font-size:15.5px;line-height:1.6;max-width:68ch}
+.task code,.lab-task code{font:0.88em var(--f-mono);background:var(--code-bg);padding:1px 5px;border-radius:5px}
+.lab{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);margin-top:12px}
+.lab-task{padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px}
+.lab-task ol{margin:6px 0 0;padding-left:20px}
+.lab-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:900px){ .lab-grid{grid-template-columns:minmax(0,1fr)} }
+.lab-ed{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.lab-tabs{display:flex;gap:2px;padding:6px;border-bottom:1px solid var(--line);background:var(--sunken)}
+.lab-tabs button{border:0;background:none;padding:4px 10px;border-radius:6px;font:500 12px var(--f-mono);cursor:pointer;color:var(--muted)}
+.lab-tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 0 0 1px var(--line)}
+.lab-ed textarea{flex:1;min-height:300px;width:100%;resize:vertical;border:0;padding:12px 14px;background:var(--surface);font:12.5px/1.6 var(--f-mono);tab-size:2;outline-offset:-2px}
+.lab-pv{padding:16px;min-width:0;background:var(--bg)}
+.lab-pv .host{min-height:200px}
+.lab-bar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line);align-items:center}
+.lab-err{font:12px var(--f-mono);color:var(--bad)}
+.lab-sol{border-top:1px solid var(--line);padding:12px 16px;background:var(--sunken)}
+.lab-sol pre{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:12px/1.55 var(--f-mono);overflow:auto;max-height:340px}
+.lab-sol h4{margin:8px 0 4px;font:600 12px var(--f-mono);color:var(--muted)}
+.chk details{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:8px}
+.chk summary{padding:11px 14px;cursor:pointer;font-weight:500}
+.chk details p{margin:0;padding:0 14px 12px;color:var(--muted)}
+.saved{font:500 12px var(--f-mono);color:var(--muted);opacity:0;transition:opacity 150ms ease}
+.saved.on{opacity:1}
+.saved.err{color:var(--bad)}
+.notes textarea{width:100%;min-height:130px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);font:15px/1.55 var(--f-body);resize:vertical}
+.endbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}
+.donebadge{font:500 13px var(--f-mono);color:var(--good)}
+
+/* esercizi da telefono */
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}
+.lead{color:var(--muted);margin:0 0 14px;max-width:62ch}
+.drills{display:flex;flex-direction:column;gap:14px}
+.dr{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:14px;min-width:0}
+.dr-n{font:500 11px var(--f-mono);color:var(--muted);margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em}
+.dr-q{margin:0 0 10px;font-weight:500;font-size:15.5px;line-height:1.45}
+.dr-code{white-space:pre-wrap;word-break:break-word;background:var(--code-bg);border-radius:10px;padding:12px;font:13px/2 var(--f-mono);margin:0 0 6px}
+.chip-b{font:600 13px var(--f-mono);border:1.5px dashed var(--accent);background:var(--accent-soft);color:var(--fg);border-radius:6px;padding:3px 8px;cursor:pointer;min-height:30px;line-height:1.3;transition:transform 120ms var(--ease-out)}
+.chip-b:active{transform:scale(.96)}
+.chip-b.ok{border-style:solid;border-color:var(--good);background:color-mix(in srgb,var(--good) 18%,var(--surface))}
+.chip-b.no{border-style:solid;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,var(--surface))}
+.dr-hint{font-size:12px;color:var(--muted);margin:0 0 10px}
+.dr-pv{border:1px dashed var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.dr-pv .btns{margin-top:10px}
+.dr-pv .cap{font:500 11px var(--f-mono);color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.06em}
+.dr-opts{display:flex;flex-direction:column;gap:6px}
+.dr-opt{text-align:left;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:14px;transition:transform 120ms var(--ease-out)}
+.dr-opt:active,.dr-line:active{transform:scale(.98)}
+.dr-opt code{font:13px var(--f-mono)}
+.dr-line{display:block;width:100%;text-align:left;font:13px/1.5 var(--f-mono);padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--code-bg);cursor:pointer;white-space:pre-wrap;word-break:break-word;margin-bottom:6px;transition:transform 120ms var(--ease-out)}
+.dr-opt.ok,.dr-line.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 16%,var(--surface))}
+.dr-opt.no,.dr-line.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--surface))}
+.dr-res{font-size:14px;margin:10px 0 0;line-height:1.5}
+.dr-res b{font-weight:600}
+.dr-res.ok b{color:var(--good)}.dr-res.no b{color:var(--bad)}
+.linkbtn{border:0;background:none;color:var(--accent);padding:0;cursor:pointer;font:inherit;text-decoration:underline}
+
+/* intro */
+.intro p,.intro li{font-size:16px;line-height:1.65;max-width:66ch}
+.intro h2{font:700 22px/1.2 var(--f-display);margin:30px 0 8px}
+.plan{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:12px 0}
+.plan button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.plan .n{font:500 11px var(--f-mono);color:var(--muted)}
+.plan .t{font-weight:600;font-size:14px}
+.plan .f{font:11px var(--f-mono);color:var(--muted)}
+.lic{font:12px/1.5 var(--f-mono);color:var(--muted);white-space:pre-wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+select.appsel{padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surface);max-width:100%}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:10px 16px;overflow:visible}
+  .side h2,.sync{display:none}
+  .dayl{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}
+  .dayb{grid-template-columns:auto;width:auto;flex:0 0 auto;padding:6px 10px;border:1px solid var(--line);background:var(--surface)}
+  .dayb .t,.dayb .c{display:none}
+  .dayb.done{border-color:var(--good)}
+  .slow .lbl{display:none}
+}
+/* feedback di pressione su tutto ciò che si tocca */
+.seg button,.lab-tabs button,.tt-btn{transition:transform 160ms var(--ease-out)}
+.seg button:active,.lab-tabs button:active,.tt-btn:active{transform:scale(.97)}
+.dayb,.plan button,.acc button{transition:transform 160ms var(--ease-out)}
+.dayb:active,.plan button:active,.acc button:active{transform:scale(.98)}
+
+/* mobile: niente flash al tocco, niente tap lento, niente selezione dei controlli */
+html{-webkit-tap-highlight-color:transparent}
+button,label,select,summary,[role="button"]{touch-action:manipulation}
+.dayb,.seg button,.chip-b,.dr-opt,.dr-line,.tt-btn,.tabs button,.plan button,.acc button,.lab-tabs button,.rb .knob,.car-t,.tilt,.xf{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+@media (pointer: coarse){
+  .notes textarea,.lab-ed textarea,.qz-row select,select.appsel{font-size:16px}
+}
+
+@media (prefers-reduced-transparency: reduce){
+  .top{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .acc .pl{transition:none}
+  .btn,.hold-b,.xf.blur,.seg button,.lab-tabs button,.tt-btn,.dayb,.plan button,.acc button{transition:none}
+  .btn:active,.seg button:active,.lab-tabs button:active,.tt-btn:active,.dayb:active,.plan button:active,.acc button:active{transform:none}
+}
+</style>
+
+<header class="top">
+  <button class="brand" id="home" type="button" aria-label="Introduzione">
+    <svg viewBox="-8 -8 116 116" aria-hidden="true"><rect class="mark-box" x="-4" y="-4" width="108" height="108" rx="18"/><path class="mark-curve" d="M0 100 C 23 0, 32 0, 100 0"/></svg>
+    Motion in 14 giorni
+  </button>
+  <span class="top-sp"></span>
+  <span class="prog" id="prog">0/14 giorni</span>
+  <span class="slow"><span class="lbl">Rallenta</span>
+    <span class="seg" id="slowseg" role="group" aria-label="Velocità delle animazioni">
+      <button type="button" data-s="1" aria-pressed="true">1×</button><button type="button" data-s="2" aria-pressed="false">2×</button><button type="button" data-s="4" aria-pressed="false">4×</button>
+    </span>
+  </span>
+</header>
+
+<div class="shell">
+  <nav class="side" aria-label="Giorni">
+    <div class="dayl" id="dayl"></div>
+    <p class="sync" id="sync">Progressi: in caricamento…</p>
+  </nav>
+  <main><div class="col" id="main"></div></main>
+</div>
+
+<script type="application/json" id="skills">__SKILLS_JSON__</script>
+
+<!-- LABORATORI: testo grezzo dei file iniziali e delle soluzioni -->
+<script type="text/plain" id="l3-html">
+<input type="checkbox" id="t" class="t">
+<label for="t" class="trigger">Menu ▾</label>
+<div class="menu" role="menu">
+  <div class="item">Profilo</div>
+  <div class="item">Impostazioni</div>
+  <div class="item">Esci</div>
+</div>
+</script>
+<script type="text/plain" id="l3-css">
+.t { position: absolute; opacity: 0; }
+.trigger {
+  display: inline-block; padding: 8px 14px; cursor: pointer; user-select: none;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+}
+.menu {
+  margin-top: 6px; width: 180px; padding: 6px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: top left;
+  pointer-events: none;
+  /* ✗ da correggere */
+  transition: all 400ms ease-in;
+}
+.t:checked ~ .menu { opacity: 1; transform: scale(1); pointer-events: auto; }
+.item { padding: 8px 10px; border-radius: 6px; }
+.item:hover { background: var(--sunken); }
+</script>
+<script type="text/plain" id="l3-sol-css">
+.t { position: absolute; opacity: 0; }
+.trigger {
+  display: inline-block; padding: 8px 14px; cursor: pointer; user-select: none;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+}
+.menu {
+  margin-top: 6px; width: 180px; padding: 6px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: top left;
+  pointer-events: none;
+  /* proprietà esplicite, curva forte, durata da dropdown */
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.t:checked ~ .menu { opacity: 1; transform: scale(1); pointer-events: auto; }
+.item { padding: 8px 10px; border-radius: 6px; }
+@media (hover: hover) and (pointer: fine) {
+  .item:hover { background: var(--sunken); }
+}
+</script>
+
+<script type="text/plain" id="l4-html">
+<input type="checkbox" id="s" class="t">
+<label for="s" class="sw"><span class="knob"></span></label>
+<p class="hint">Clicca due volte di fila, velocemente.</p>
+</script>
+<script type="text/plain" id="l4-css">
+.t { position: absolute; opacity: 0; }
+.sw {
+  display: inline-block; position: relative; width: 52px; height: 30px;
+  border-radius: 99px; background: var(--line); cursor: pointer;
+}
+.knob {
+  position: absolute; top: 3px; left: 3px; width: 24px; height: 24px;
+  border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / .3);
+  /* ✗ keyframes: ogni clic riparte da capo */
+  animation: off 600ms forwards;
+}
+.t:checked + .sw { background: var(--accent); }
+.t:checked + .sw .knob { animation: on 600ms forwards; }
+@keyframes on  { from { transform: translateX(0); }    to { transform: translateX(22px); } }
+@keyframes off { from { transform: translateX(22px); } to { transform: translateX(0); } }
+.hint { color: var(--muted); font-size: 13px; }
+</script>
+<script type="text/plain" id="l4-sol-css">
+.t { position: absolute; opacity: 0; }
+.sw {
+  display: inline-block; position: relative; width: 52px; height: 30px;
+  border-radius: 99px; background: var(--line); cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.knob {
+  position: absolute; top: 3px; left: 3px; width: 24px; height: 24px;
+  border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / .3);
+  /* transition: riparte dal valore attuale se cambi idea a metà */
+  transition: transform 200ms var(--ease-out);
+}
+.t:checked + .sw { background: var(--accent); }
+.t:checked + .sw .knob { transform: translateX(22px); }
+.hint { color: var(--muted); font-size: 13px; }
+</script>
+
+<script type="text/plain" id="l5-html">
+<div class="wrap">
+  <input type="checkbox" id="p" class="t">
+  <label for="p" class="btn">Condividi</label>
+  <div class="pop">
+    <div class="row">Copia link</div>
+    <div class="row">Invia per email</div>
+    <div class="row">Incorpora</div>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="l5-css">
+.t { position: absolute; opacity: 0; }
+.wrap { position: relative; display: inline-block; }
+.btn {
+  display: inline-block; padding: 9px 16px; border-radius: 9px; cursor: pointer; user-select: none;
+  background: var(--accent); color: var(--accent-ink);
+}
+.pop {
+  position: absolute; top: calc(100% + 6px); left: 0; width: 190px; padding: 6px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
+  /* ✗ da correggere */
+  transform: scale(0);
+  transform-origin: center;
+  transition: transform 250ms ease;
+}
+.t:checked ~ .pop { transform: scale(1); }
+.row { padding: 8px 10px; border-radius: 6px; }
+</script>
+<script type="text/plain" id="l5-sol-css">
+.t { position: absolute; opacity: 0; }
+.wrap { position: relative; display: inline-block; }
+.btn {
+  display: inline-block; padding: 9px 16px; border-radius: 9px; cursor: pointer; user-select: none;
+  background: var(--accent); color: var(--accent-ink);
+  transition: transform 160ms var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.pop {
+  position: absolute; top: calc(100% + 6px); left: 0; width: 190px; padding: 6px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
+  opacity: 0;
+  transform: scale(0.95);
+  transform-origin: top left;          /* esce dal bottone */
+  pointer-events: none;
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.t:checked ~ .pop { opacity: 1; transform: scale(1); pointer-events: auto; }
+.row { padding: 8px 10px; border-radius: 6px; }
+</script>
+
+<script type="text/plain" id="l6-html">
+<input type="checkbox" id="d" class="t">
+<input type="checkbox" id="l" class="t">
+<div class="bar">
+  <label for="d" class="btn">Apri / chiudi</label>
+  <label for="l" class="btn">Contenuto lungo</label>
+</div>
+<div class="phone">
+  <div class="drawer">
+    <div class="handle"></div>
+    <p><b>Impostazioni rapide</b></p>
+    <div class="more"><p>Wi-Fi</p><p>Bluetooth</p><p>Modalità aereo</p><p>Hotspot</p><p>Luminosità</p><p>Non disturbare</p></div>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="l6-css">
+.t { position: absolute; opacity: 0; }
+.bar { display: flex; gap: 8px; margin-bottom: 10px; }
+.btn { padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); cursor: pointer; user-select: none; background: var(--surface); }
+#d:checked ~ .bar label[for=d], #l:checked ~ .bar label[for=l] { background: var(--accent-soft); }
+.phone {
+  position: relative; height: 300px; max-width: 280px; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 22px; background: var(--sunken);
+}
+.drawer {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 18px;
+  background: var(--surface); border-radius: 18px 18px 0 0; box-shadow: 0 -6px 24px rgb(0 0 0 / .12);
+  /* ✗ pixel fissi e curva debole */
+  transform: translateY(120px);
+  transition: transform 300ms ease;
+}
+#d:checked ~ .phone .drawer { transform: translateY(0); }
+.handle { width: 36px; height: 4px; border-radius: 4px; background: var(--line); margin: 0 auto 8px; }
+.more { display: none; }
+#l:checked ~ .phone .more { display: block; }
+p { margin: 6px 0; }
+</script>
+<script type="text/plain" id="l6-sol-css">
+.t { position: absolute; opacity: 0; }
+.bar { display: flex; gap: 8px; margin-bottom: 10px; }
+.btn { padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); cursor: pointer; user-select: none; background: var(--surface); }
+#d:checked ~ .bar label[for=d], #l:checked ~ .bar label[for=l] { background: var(--accent-soft); }
+.phone {
+  position: relative; height: 300px; max-width: 280px; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 22px; background: var(--sunken);
+}
+.drawer {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 18px;
+  background: var(--surface); border-radius: 18px 18px 0 0; box-shadow: 0 -6px 24px rgb(0 0 0 / .12);
+  transform: translateY(100%);                       /* la sua altezza, qualunque sia */
+  transition: transform 500ms var(--ease-drawer);    /* curva iOS (Ionic) */
+}
+#d:checked ~ .phone .drawer { transform: translateY(0); }
+.handle { width: 36px; height: 4px; border-radius: 4px; background: var(--line); margin: 0 auto 8px; }
+.more { display: none; }
+#l:checked ~ .phone .more { display: block; }
+p { margin: 6px 0; }
+</script>
+
+<script type="text/plain" id="l7-html">
+<button class="hold">
+  <span class="label">Tieni premuto per eliminare</span>
+  <span class="overlay" aria-hidden="true">Tieni premuto per eliminare</span>
+</button>
+</script>
+<script type="text/plain" id="l7-css">
+.hold {
+  position: relative; overflow: hidden; padding: 12px 18px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-weight: 500;
+  cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: var(--bad); color: var(--on-bad);
+  /* scrivi qui: nascondi l'overlay con clip-path e dai la transition del rilascio */
+}
+/* scrivi qui: .hold:active e .hold:active .overlay */
+</script>
+<script type="text/plain" id="l7-sol-css">
+.hold {
+  position: relative; overflow: hidden; padding: 12px 18px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-weight: 500;
+  cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  transition: transform 160ms var(--ease-out);
+}
+.hold:active { transform: scale(0.97); }
+.overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: var(--bad); color: var(--on-bad);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 200ms var(--ease-out);   /* rilascio: veloce */
+}
+.hold:active .overlay {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 2s linear;               /* pressione: lenta e deliberata */
+}
+</script>
+
+<script type="text/plain" id="l8-html">
+<div class="phone">
+  <button class="open">Apri sheet</button>
+  <div class="sheet">
+    <div class="handle"></div>
+    <p><b>Trascina giù</b> per chiudere. Prova anche un colpo veloce e corto.</p>
+    <p class="read">velocità: –</p>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="l8-css">
+.phone {
+  position: relative; height: 360px; max-width: 280px; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 22px; background: var(--sunken);
+}
+.open { margin: 14px; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); font: inherit; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 70%; padding: 10px 16px;
+  background: var(--surface); border-radius: 18px 18px 0 0; box-shadow: 0 -6px 24px rgb(0 0 0 / .14);
+  touch-action: none; cursor: grab;
+  transform: translateY(100%);
+  transition: transform 500ms var(--ease-drawer);
+}
+.sheet.is-open { transform: translateY(0); }
+.sheet.dragging { transition: none; }
+.handle { width: 36px; height: 4px; border-radius: 4px; background: var(--line); margin: 0 auto 8px; }
+.read { font: 12px var(--f-mono); color: var(--muted); }
+</script>
+<script type="text/plain" id="l8-js">
+const sheet = root.querySelector('.sheet');
+const read = root.querySelector('.read');
+root.querySelector('.open').onclick = () => sheet.classList.add('is-open');
+
+let startY = 0, dy = 0, dragging = false;
+
+sheet.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  startY = e.clientY;
+  sheet.classList.add('dragging');
+  // TODO 1: pointer capture, così il drag continua fuori dall'elemento
+  // TODO 2: protezione multi-touch (se stai già trascinando, esci)
+  // TODO 3: segna il tempo di inizio per la velocità
+});
+
+sheet.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  dy = e.clientY - startY;
+  // TODO 4: verso l'alto (dy < 0) applica rubber-band invece del muro
+  if (dy < 0) dy = 0;
+  sheet.style.transform = 'translateY(' + dy + 'px)';
+});
+
+sheet.addEventListener('pointerup', () => {
+  if (!dragging) return;
+  dragging = false;
+  sheet.classList.remove('dragging');
+  sheet.style.transform = '';
+  // TODO 5: chiudi anche con un flick: |dy| / tempo > 0.11 px/ms
+  if (dy > sheet.offsetHeight * 0.5) sheet.classList.remove('is-open');
+  dy = 0;
+});
+</script>
+<script type="text/plain" id="l8-sol-js">
+const sheet = root.querySelector('.sheet');
+const read = root.querySelector('.read');
+root.querySelector('.open').onclick = () => sheet.classList.add('is-open');
+
+let startY = 0, base = 0, y = 0, t0 = 0, dragging = false;
+
+// Apple: più tiri oltre il bordo, meno l'elemento segue
+function rubber(over, dim, c = 0.55) {
+  return (over * dim * c) / (dim + c * over);
+}
+
+sheet.addEventListener('pointerdown', (e) => {
+  if (dragging) return;                 // multi-touch: ignora il secondo dito
+  dragging = true;
+  // parti da dove il drawer è DAVVERO sullo schermo, anche a metà animazione
+  base = new DOMMatrixReadOnly(getComputedStyle(sheet).transform).m42;
+  y = base;
+  sheet.style.transform = 'translateY(' + y + 'px)';
+  sheet.classList.add('dragging');
+  startY = e.clientY;
+  t0 = performance.now();
+  sheet.setPointerCapture(e.pointerId);  // il drag continua fuori dai bordi
+});
+
+sheet.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  y = base + e.clientY - startY;
+  if (y < 0) y = -rubber(-y, sheet.offsetHeight);
+  sheet.style.transform = 'translateY(' + y + 'px)';  // transform diretto, niente CSS variable
+});
+
+function end() {
+  if (!dragging) return;
+  dragging = false;
+  const moved = y - base;
+  const velocity = Math.abs(moved) / (performance.now() - t0);  // px/ms
+  const dismiss = y > sheet.offsetHeight * 0.5 || (moved > 0 && velocity > 0.11);
+  sheet.classList.toggle('is-open', !dismiss);
+  sheet.classList.remove('dragging');
+  sheet.style.transform = '';
+  // Una transition CSS riparte senza la velocità del dito. Per ereditarla serve una
+  // spring con velocità iniziale: è quello che fa la demo "Drag to dismiss" del giorno 8.
+  read.textContent = 'velocità: ' + velocity.toFixed(2) + ' px/ms' + (dismiss ? ' → chiuso' : '');
+}
+sheet.addEventListener('pointerup', end);
+sheet.addEventListener('pointercancel', end);
+</script>
+
+<script type="text/plain" id="l9-html">
+<div class="app">
+  <header class="bar"><span class="title">Libreria</span></header>
+  <div class="content">
+    <h1 class="display">Ascolta ovunque</h1>
+    <p class="body">Le tue playlist, sincronizzate su ogni dispositivo.</p>
+    <div class="tile a"></div><div class="tile b"></div><div class="tile c"></div><div class="tile a"></div>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="l9-css">
+.app { position: relative; height: 320px; max-width: 340px; overflow: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); }
+/* ✗ barra opaca con bordo pieno */
+.bar { position: sticky; top: 0; z-index: 1; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+/* ✗ tracking fisso su tutte le dimensioni */
+.title { font-weight: 600; letter-spacing: 0.05em; }
+.content { padding: 12px 16px; display: grid; gap: 10px; }
+.display { font-size: 40px; line-height: 1.4; letter-spacing: 0.05em; margin: 4px 0 0; }
+.body { margin: 0; letter-spacing: 0.05em; color: var(--muted); }
+.tile { height: 90px; border-radius: 12px; }
+.a { background: linear-gradient(135deg, #ff8a5b, #ffd166); }
+.b { background: linear-gradient(135deg, #4cc9f0, #4361ee); }
+.c { background: linear-gradient(135deg, #80ed99, #38a3a5); }
+</script>
+<script type="text/plain" id="l9-sol-css">
+.app { position: relative; height: 320px; max-width: 340px; overflow: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); }
+.bar {
+  position: sticky; top: 0; z-index: 1; padding: 12px 16px;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .bar { background: var(--surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+.title { font-weight: 600; letter-spacing: 0; }
+.content { padding: 12px 16px; display: grid; gap: 10px; }
+.display { font-size: 40px; line-height: 1.05; letter-spacing: -0.02em; margin: 4px 0 0; }
+.body { margin: 0; letter-spacing: 0; line-height: 1.5; color: var(--muted); }
+.tile { height: 90px; border-radius: 12px; }
+.a { background: linear-gradient(135deg, #ff8a5b, #ffd166); }
+.b { background: linear-gradient(135deg, #4cc9f0, #4361ee); }
+.c { background: linear-gradient(135deg, #80ed99, #38a3a5); }
+</script>
+
+<script type="text/plain" id="l10-html">
+<input type="checkbox" id="m" class="t">
+<label for="m" class="btn">Apri modal</label>
+<div class="stage">
+  <label for="m" class="backdrop"></label>
+  <div class="modal">
+    <h3>Eliminare il progetto?</h3>
+    <p>L'azione non si può annullare.</p>
+    <label for="m" class="btn">Chiudi</label>
+  </div>
+</div>
+</script>
+<script type="text/plain" id="l10-css">
+.t { position: absolute; opacity: 0; }
+.btn { display: inline-block; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; user-select: none; }
+.stage { position: relative; height: 240px; margin-top: 10px; border: 1px dashed var(--line); border-radius: 12px; overflow: hidden; }
+.backdrop { position: absolute; inset: 0; background: rgb(0 0 0 / .35); display: none; }
+.modal {
+  position: absolute; left: 50%; top: 50%; width: 220px; margin: -80px 0 0 -110px; padding: 16px;
+  background: var(--surface); border-radius: 14px; box-shadow: 0 20px 50px rgb(0 0 0 / .25);
+  display: none;   /* ✗ display non si anima */
+}
+#m:checked ~ .stage .backdrop, #m:checked ~ .stage .modal { display: block; }
+h3 { margin: 0 0 6px; }
+p { margin: 0 0 12px; color: var(--muted); }
+</script>
+<script type="text/plain" id="l10-sol-css">
+.t { position: absolute; opacity: 0; }
+.btn {
+  display: inline-block; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; user-select: none;
+  transition: transform 160ms var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.stage { position: relative; height: 240px; margin-top: 10px; border: 1px dashed var(--line); border-radius: 12px; overflow: hidden; }
+.backdrop {
+  position: absolute; inset: 0; background: rgb(0 0 0 / .35);
+  opacity: 0; pointer-events: none;
+  transition: opacity 250ms var(--ease-out);
+}
+.modal {
+  position: absolute; left: 50%; top: 50%; width: 220px; margin: -80px 0 0 -110px; padding: 16px;
+  background: var(--surface); border-radius: 14px; box-shadow: 0 20px 50px rgb(0 0 0 / .25);
+  opacity: 0; transform: scale(0.96); pointer-events: none;
+  transform-origin: center;   /* il modal resta centrato: non è ancorato a un trigger */
+  transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out);
+}
+#m:checked ~ .stage .backdrop { opacity: 1; pointer-events: auto; }
+#m:checked ~ .stage .modal { opacity: 1; transform: scale(1); pointer-events: auto; }
+h3 { margin: 0 0 6px; }
+p { margin: 0 0 12px; color: var(--muted); }
+</script>
+
+<script type="text/plain" id="l11-html">
+<div class="row"><div class="bar"></div></div>
+<div class="track"><div class="ball"></div></div>
+<div class="btns">
+  <button class="go">Avvia</button>
+  <button class="block">Blocca il main thread 1 s</button>
+</div>
+</script>
+<script type="text/plain" id="l11-css">
+.row { height: 10px; background: var(--sunken); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+/* ✗ width + all */
+.bar { height: 100%; width: 0; background: var(--accent); transition: all 1200ms ease; }
+.bar.full { width: 100%; }
+.track { position: relative; height: 40px; background: var(--sunken); border-radius: 10px; margin-bottom: 12px; }
+.ball { position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+</script>
+<script type="text/plain" id="l11-js">
+const bar = root.querySelector('.bar');
+const ball = root.querySelector('.ball');
+let right = false;
+
+root.querySelector('.go').onclick = () => {
+  bar.classList.toggle('full');
+  right = !right;
+  // ✗ muove "left" a ogni frame, sul main thread
+  const from = right ? 8 : 208, to = right ? 208 : 8;
+  const start = performance.now();
+  function frame(now) {
+    const t = Math.min(1, (now - start) / 1200);
+    ball.style.left = (from + (to - from) * t) + 'px';
+    if (t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+};
+
+root.querySelector('.block').onclick = () => {
+  setTimeout(() => { const end = performance.now() + 1000; while (performance.now() < end) {} }, 150);
+};
+</script>
+<script type="text/plain" id="l11-sol-css">
+.row { height: 10px; background: var(--sunken); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+.bar {
+  height: 100%; width: 100%; background: var(--accent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 1200ms var(--ease-in-out);
+}
+.bar.full { transform: scaleX(1); }
+.track { position: relative; height: 40px; background: var(--sunken); border-radius: 10px; margin-bottom: 12px; }
+.ball { position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+</script>
+<script type="text/plain" id="l11-sol-js">
+const bar = root.querySelector('.bar');
+const ball = root.querySelector('.ball');
+let right = false;
+
+root.querySelector('.go').onclick = () => {
+  bar.classList.toggle('full');
+  right = !right;
+  // WAAPI su transform: performance da CSS, controllo da JS, nessuna libreria
+  ball.animate(
+    [{ transform: 'translateX(' + (right ? 0 : 200) + 'px)' },
+     { transform: 'translateX(' + (right ? 200 : 0) + 'px)' }],
+    { duration: 1200, easing: 'cubic-bezier(0.77, 0, 0.175, 1)', fill: 'forwards' }
+  );
+};
+
+root.querySelector('.block').onclick = () => {
+  setTimeout(() => { const end = performance.now() + 1000; while (performance.now() < end) {} }, 150);
+};
+</script>
+
+<script type="text/plain" id="l12-html">
+<div class="card">Card con hover</div>
+<input type="checkbox" id="p" class="t">
+<label for="p" class="btn">Pannello</label>
+<div class="stage"><div class="panel">Pannello laterale</div></div>
+</script>
+<script type="text/plain" id="l12-css">
+.card {
+  position: relative;
+  padding: 16px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; background: var(--surface);
+  transition: transform 200ms var(--ease-out);
+}
+/* l'ombra vive su un layer a parte: si anima l'opacità, non box-shadow */
+.card::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit;
+  box-shadow: var(--shadow); opacity: 0; pointer-events: none;
+  transition: opacity 200ms var(--ease-out);
+}
+/* ✗ hover non protetto: su touch resta "appiccicato" */
+.card:hover { transform: translateY(-4px); }
+.card:hover::after { opacity: 1; }
+.t { position: absolute; opacity: 0; }
+.btn { display: inline-block; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; user-select: none; }
+.stage { position: relative; height: 150px; margin-top: 10px; border: 1px dashed var(--line); border-radius: 12px; overflow: hidden; }
+.panel {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 60%; padding: 14px;
+  background: var(--surface); box-shadow: -8px 0 24px rgb(0 0 0 / .12);
+  transform: translateX(100%);
+  transition: transform 300ms var(--ease-drawer);
+}
+#p:checked ~ .stage .panel { transform: translateX(0); }
+/* ✗ manca prefers-reduced-motion */
+</script>
+<script type="text/plain" id="l12-sol-css">
+.card {
+  position: relative;
+  padding: 16px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; background: var(--surface);
+  transition: transform 200ms var(--ease-out);
+}
+/* l'ombra vive su un layer a parte: si anima l'opacità, non box-shadow */
+.card::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit;
+  box-shadow: var(--shadow); opacity: 0; pointer-events: none;
+  transition: opacity 200ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { transform: translateY(-4px); }
+  .card:hover::after { opacity: 1; }
+}
+.t { position: absolute; opacity: 0; }
+.btn { display: inline-block; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; user-select: none; }
+.stage { position: relative; height: 150px; margin-top: 10px; border: 1px dashed var(--line); border-radius: 12px; overflow: hidden; }
+.panel {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 60%; padding: 14px;
+  background: var(--surface); box-shadow: -8px 0 24px rgb(0 0 0 / .12);
+  transform: translateX(100%);
+  transition: transform 300ms var(--ease-drawer);
+}
+#p:checked ~ .stage .panel { transform: translateX(0); }
+
+/* meno e più gentile, non zero: via il movimento, resta l'opacità */
+@media (prefers-reduced-motion: reduce) {
+  .panel { transform: none; opacity: 0; transition: opacity 200ms ease; }
+  #p:checked ~ .stage .panel { opacity: 1; }
+  .card, .card:hover { transform: none; }
+}
+</script>
+
+<script>
+// Se qualcosa si rompe, l'errore compare sulla pagina invece di lasciarla vuota.
+(() => {
+  const show = msg => { const m = document.getElementById('main'); if (!m) return; const p = document.createElement('pre'); p.className = 'raw'; p.style.color = 'var(--bad)'; p.textContent = 'Errore della pagina: ' + msg; m.prepend(p); };
+  window.addEventListener('error', e => show(e.message + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : '')));
+  window.addEventListener('unhandledrejection', e => show(String(e.reason && e.reason.message || e.reason)));
+})();
+</script>
+<script>
+(() => {
+'use strict';
+const SK = JSON.parse(document.getElementById('skills').textContent);
+const EO = 'cubic-bezier(0.23, 1, 0.32, 1)', EIO = 'cubic-bezier(0.77, 0, 0.175, 1)', ED = 'cubic-bezier(0.32, 0.72, 0, 1)';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function el(html) { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
+const ls = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------- slow motion ---------- */
+let S = 1;
+const roots = new Set();
+function watchSlow(root) {
+  if (roots.has(root)) return; roots.add(root);
+  const fix = e => { if (S === 1 || !e.target.getAnimations) return; e.target.getAnimations().forEach(a => { a.playbackRate = 1 / S; }); };
+  root.addEventListener('transitionrun', fix, true);
+  root.addEventListener('animationstart', fix, true);
+}
+watchSlow(document);
+function applySlowAll() {
+  const all = document.getAnimations ? document.getAnimations() : [];
+  all.forEach(a => { a.playbackRate = 1 / S; });
+  roots.forEach(r => { if (r !== document && r.getAnimations) r.getAnimations().forEach(a => { a.playbackRate = 1 / S; }); });
+}
+const RM = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+// entrata breve per contenuto che compare: evita il salto; con reduced motion solo opacità
+function enter(node) { if (!node) return; const r = RM(); play(node, r ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }], { duration: r ? 150 : 200, easing: EO }); }
+function play(node, kf, opts) { const a = node.animate(kf, opts); a.playbackRate = 1 / S; return a; }
+$$('#slowseg button').forEach(b => b.addEventListener('click', () => {
+  S = +b.dataset.s;
+  $$('#slowseg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  applySlowAll();
+}));
+document.addEventListener('touchstart', () => {}, { passive: true }); // :active su iOS
+
+/* ---------- spring ---------- */
+function apple(duration, bounce, m = 1) { const w = 2 * Math.PI / duration; return { k: w * w * m, c: 2 * (1 - bounce) * w * m, m }; }
+class Spring {
+  constructor(p, x, on, eps = 0.3) { this.k = p.k; this.c = p.c; this.m = p.m || 1; this.x = x; this.v = 0; this.t = x; this.on = on; this.eps = eps; this.raf = 0; this.last = 0; this.tick = this.tick.bind(this); }
+  params(p) { this.k = p.k; this.c = p.c; this.m = p.m || 1; }
+  to(t, v) { this.t = t; if (v !== undefined) this.v = v; if (!this.raf) { this.last = performance.now(); this.raf = requestAnimationFrame(this.tick); } }
+  jump(x) { this.x = x; this.t = x; this.v = 0; this.on(x); }
+  stop() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; this.t = this.x; this.v = 0; }
+  tick(now) {
+    let dt = Math.min(0.064, (now - this.last) / 1000) / S; this.last = now;
+    const h = 1 / 600;
+    while (dt > 0) { const s = Math.min(h, dt); const a = (-this.k * (this.x - this.t) - this.c * this.v) / this.m; this.v += a * s; this.x += this.v * s; dt -= s; }
+    if (Math.abs(this.x - this.t) < this.eps && Math.abs(this.v) < this.eps * 4) { this.x = this.t; this.v = 0; this.on(this.x); this.raf = 0; return; }
+    this.on(this.x); this.raf = requestAnimationFrame(this.tick);
+  }
+}
+function simulate(p, T = 1.6) { const pts = []; let x = 0, v = 0; const h = 1 / 600; let t = 0; let settle = T; let still = 0;
+  for (let i = 0; t < T; i++) { const a = (-p.k * (x - 1) - p.c * v) / p.m; v += a * h; x += v * h; t += h;
+    if (i % 6 === 0) pts.push([t, x]);
+    if (Math.abs(x - 1) < 0.002 && Math.abs(v) < 0.01) { still += h; if (still > 0.05 && settle === T) settle = t - 0.05; } else { still = 0; settle = T; } }
+  return { pts, settle };
+}
+function springEasing(p) {
+  if (!(window.CSS && CSS.supports && CSS.supports('transition-timing-function', 'linear(0, 1)'))) return { easing: EO, ms: 450 };
+  let x = 0, v = 0; const h = 1 / 1000; const xs = [0]; let t = 0;
+  while (t < 3) { const a = (-p.k * (x - 1) - p.c * v) / p.m; v += a * h; x += v * h; t += h; xs.push(x); if (t > 0.1 && Math.abs(x - 1) < 0.001 && Math.abs(v) < 0.005) break; }
+  const n = 48, out = []; for (let i = 0; i <= n; i++) out.push(xs[Math.round(i / n * (xs.length - 1))].toFixed(4));
+  out[n] = '1'; return { easing: 'linear(' + out.join(', ') + ')', ms: Math.round(t * 1000) };
+}
+function tracker() { const pts = []; return {
+  add(x) { const t = performance.now(); pts.push({ x, t }); while (pts.length > 2 && t - pts[0].t > 100) pts.shift(); },
+  v() { if (pts.length < 2) return 0; const a = pts[0], b = pts[pts.length - 1]; const dt = Math.max(8, b.t - a.t); return Math.max(-8, Math.min(8, (b.x - a.x) / dt)); }, // px/ms, limitata a ±8
+  reset() { pts.length = 0; } }; }
+function rubber(over, dim, c = 0.55) { return (over * dim * c) / (dim + c * over); }
+function curveSvg(x1, y1, x2, y2) {
+  return `<svg class="curve" viewBox="-6 -6 112 112" aria-hidden="true"><path class="ax" d="M0 0 V100 H100"/><path class="d" d="M0 100 L100 0"/><path class="c" d="M0 100 C ${x1 * 100} ${100 - y1 * 100}, ${x2 * 100} ${100 - y2 * 100}, 100 0"/></svg>`;
+}
+
+/* ---------- demo wrapper ---------- */
+function card(title, rule, body, note) {
+  const c = el(`<section class="demo"><header class="demo-head"><span class="demo-tag">Esempio live</span><span class="demo-title">${title}</span>${rule ? `<span class="demo-rule">${rule}</span>` : ''}</header><div class="demo-body"></div>${note ? `<p class="demo-note">${note}</p>` : ''}</section>`);
+  c.querySelector('.demo-body').append(body); return c;
+}
+function popMenu(cls, style) { return `<div class="pop ${cls || ''}" style="${style || ''}"><div>Profilo</div><div>Impostazioni</div><div>Esci</div></div>`; }
+
+const DEMOS = {
+  gallery() {
+    const b = el(`<div><div class="g-stage"><div class="g-box"></div><div class="g-dots"><i></i><i></i><i></i><i></i><i></i></div></div><div class="btns"></div></div>`);
+    const box = $('.g-box', b), dots = $$('.g-dots i', b);
+    const pop = springEasing(apple(0.45, 0.35));
+    const fx = {
+      'Fade in': () => play(box, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: EO }),
+      'Slide in': () => play(box, [{ opacity: 0, transform: 'translateY(28px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: EO }),
+      'Scale in': () => play(box, [{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 250, easing: EO }),
+      'Pop in': () => { play(box, [{ opacity: 0 }, { opacity: 1 }], { duration: 150 }); play(box, [{ transform: 'scale(.8)' }, { transform: 'none' }], { duration: pop.ms, easing: pop.easing }); },
+      'Stagger': () => dots.forEach((d, i) => play(d, [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: .25, transform: 'none' }], { duration: 300, easing: EO, delay: i * 60, fill: 'backwards' })),
+      'Shake': () => play(box, [0, -9, 9, -6, 6, -3, 3, 0].map(x => ({ transform: `translateX(${x}px)` })), { duration: 420, easing: 'ease-out' }),
+      'Pulse': () => play(box, [{ transform: 'scale(1)' }, { transform: 'scale(1.07)' }, { transform: 'scale(1)' }], { duration: 700, easing: 'ease-in-out', iterations: 2 }),
+      'Rotate': () => play(box, [{ transform: 'rotate(0)' }, { transform: 'rotate(90deg)' }], { duration: 400, easing: EIO }),
+      '3D flip': () => play(box, [{ transform: 'perspective(400px) rotateY(0)' }, { transform: 'perspective(400px) rotateY(180deg)' }, { transform: 'perspective(400px) rotateY(360deg)' }], { duration: 900, easing: EIO })
+    };
+    const btns = $('.btns', b);
+    Object.keys(fx).forEach(k => { const x = el(`<button class="btn small" type="button">${k}</button>`); x.onclick = fx[k]; btns.append(x); });
+    return card('Il glossario in movimento', 'Clicca un termine. Con 4× in alto lo vedi al rallentatore.', b, 'Pop in usa una spring vera (bounce 0.35): nota l\'overshoot che lo distingue da Scale in.');
+  },
+
+  freq() {
+    const col = (lab, cls) => `<div class="p"><span class="lab-l">${lab}</span><button class="btn small" type="button">Apri / chiudi ⌘K</button><div class="pal ${cls}"><div class="q">Cerca un comando…</div><div class="r">Nuova issue</div><div class="r">Vai al progetto</div><div class="r">Cambia tema</div></div><span class="out">0 aperture</span></div>`;
+    const b = el(`<div class="ab">${col('A · animata 250ms', 'pal-anim')}${col('B · nessuna animazione', '')}</div>`);
+    $$('.p', b).forEach(p => { let n = 0; const pal = $('.pal', p), out = $('.out', p);
+      $('button', p).onclick = () => { const o = pal.classList.toggle('open'); if (o) out.textContent = (++n) + ' aperture'; }; });
+    return card('Command palette: animata o no?', 'Regola: 100+ volte al giorno → nessuna animazione. Mai.', b, 'Aprile e chiudile 15 volte ciascuna, di fila. A diventa un\'attesa. B sembra più veloce anche se “manca” qualcosa.');
+  },
+
+  purpose() {
+    const opts = ['Scegli…', 'Feedback', 'Coerenza spaziale', 'Indicazione di stato', 'Spiegazione', 'Evitare un cambio brusco', 'Non animare'];
+    const items = [
+      ['Apertura della command palette con ⌘K', 'Non animare', 'Azione da tastiera, centinaia di volte al giorno.'],
+      ['Toast che entra dal basso ed esce dal basso', 'Coerenza spaziale', 'Stessa direzione in entrata e uscita: lo swipe per chiudere diventa ovvio.'],
+      ['Bottone che si abbassa quando lo premi', 'Feedback', 'Conferma che l\'interfaccia ti ha sentito.'],
+      ['Bottone “Salva” che diventa “Salvato ✓”', 'Indicazione di stato', 'Rende leggibile il cambio di stato.'],
+      ['Animazione in landing che mostra come funziona la sync', 'Spiegazione', 'Marketing: qui la durata può essere più lunga.'],
+      ['Le card della dashboard ruotano un po\' all\'hover', 'Non animare', 'Decine di volte al giorno e lo scopo è solo “è bello”.'],
+      ['Un pannello che senza transizione fa saltare il layout', 'Evitare un cambio brusco', 'Un elemento che compare di colpo sembra rotto.']
+    ];
+    const b = el(`<div class="qz">${items.map((it, i) => `<div class="qz-row"><span>${it[0]}</span><select id="qz-${i}" aria-label="Scopo">${opts.map(o => `<option>${o}</option>`).join('')}</select><span class="mk"></span></div>`).join('')}<div class="btns"><button class="btn small primary" type="button">Controlla</button><span class="out"></span></div></div>`);
+    $('.btn', b).onclick = () => { let ok = 0;
+      $$('.qz-row', b).forEach((r, i) => { const v = $('select', r).value; const good = v === items[i][1]; if (good) ok++;
+        const mk = $('.mk', r); mk.textContent = good ? '✓' : '✗'; mk.className = 'mk ' + (good ? 'ok' : 'no');
+        let s = $('.sol', r); if (!s) { s = el('<span class="sol"></span>'); r.append(s); } s.textContent = (good ? '' : 'Risposta: ' + items[i][1] + '. ') + items[i][2]; });
+      $('.out', b).textContent = ok + '/' + items.length; };
+    return card('Qual è lo scopo?', 'Regola: ogni animazione deve rispondere a “perché si anima?”.', b);
+  },
+
+  easing() {
+    const cs = [['ease-in', [0.42, 0, 1, 1], 'x', 'parte lenta: il primo frame, quello che guardi, è fermo'], ['ease-out (CSS)', [0, 0, 0.58, 1], 'm', 'direzione giusta, ma debole'], ['ease-out forte', [0.23, 1, 0.32, 1], 'v', 'movimento subito, arrivo morbido']];
+    const b = el(`<div><div class="btns" style="margin-bottom:12px"><button class="btn primary small" type="button">Apri / chiudi tutti</button></div><div class="ab">${cs.map(c => `<div class="p"><span class="lab-l"><span class="${c[2]}">●</span> ${c[0]} · 300ms</span>${curveSvg(...c[1])}<div class="drop">${popMenu('', `transition:opacity 300ms cubic-bezier(${c[1].join(',')}),transform 300ms cubic-bezier(${c[1].join(',')})`)}</div><span class="out">${c[3]}</span></div>`).join('')}</div></div>`);
+    $('.btn', b).onclick = () => $$('.drop .pop', b).forEach(p => p.classList.toggle('open'));
+    return card('Stessa durata, tre curve', 'Regola: mai ease-in sulla UI. Curve custom più forti di quelle CSS.', b, 'Tutti e tre durano 300ms. Prova a 4×: guarda solo i primi 50ms.');
+  },
+
+  duration() {
+    const b = el(`<div><div class="ctl"><label for="dur-r">Durata <input type="range" id="dur-r" min="60" max="800" step="10" value="400"></label><span class="out" id="dur-o"></span><button class="btn small primary" type="button">Apri / chiudi</button></div><div class="drop">${popMenu()}</div></div>`);
+    const r = $('#dur-r', b), o = $('#dur-o', b), pop = $('.pop', b);
+    const zone = v => v < 100 ? 'troppo veloce per vederlo' : v <= 160 ? 'range: feedback di pressione' : v <= 250 ? 'range dropdown ✓' : v <= 300 ? 'al limite della UI' : v <= 500 ? 'da modal/drawer, lento per un menu' : 'marketing, non UI';
+    const set = () => { const v = +r.value; o.textContent = v + 'ms · ' + zone(v); pop.style.transition = `opacity ${v}ms ${EO}, transform ${v}ms ${EO}`; };
+    r.oninput = set; set(); $('.btn', b).onclick = () => pop.classList.toggle('open');
+    return card('Quanto deve durare un dropdown?', 'Regola: dropdown 150–250ms. UI sotto i 300ms.', b, 'Parti da 400ms e scendi finché smetti di “aspettare” il menu.');
+  },
+
+  spinner() {
+    const b = el(`<div><div class="btns" style="margin-bottom:12px"><button class="btn primary small" type="button">Simula caricamento (3 s)</button></div><div class="ab"><div class="p"><span class="lab-l">A · 1,4 s per giro</span><div class="spin" style="animation-duration:1.4s"></div><span class="out">–</span></div><div class="p"><span class="lab-l">B · 0,55 s per giro</span><div class="spin" style="animation-duration:.55s"></div><span class="out">–</span></div></div></div>`);
+    const spins = $$('.spin', b); spins.forEach(s => { s.style.visibility = 'hidden'; }); let busy = 0;
+    $('.btn', b).onclick = () => { clearTimeout(busy); $$('.out', b).forEach(o => o.textContent = 'carico…'); spins.forEach(s => { s.style.visibility = 'visible'; });
+      busy = setTimeout(() => { spins.forEach(s => { s.style.visibility = 'hidden'; }); $$('.out', b).forEach(o => o.textContent = 'pronto, 3 s esatti'); }, 3000 * S); };
+    return card('Due spinner, stesso tempo di attesa', 'Regola: uno spinner più veloce fa sembrare il caricamento più breve.', b);
+  },
+
+  springlab() {
+    const b = el(`<div>
+      <div class="presets"></div>
+      <div class="ctl"><span class="seg" role="group" aria-label="Modalità"><button type="button" data-m="a" aria-pressed="true">Apple: durata + bounce</button><button type="button" data-m="p" aria-pressed="false">Fisica: k · c · m</button></span></div>
+      <div class="ctl" data-g="a"><label for="sp-d">durata <input type="range" id="sp-d" min="0.15" max="1.2" step="0.05" value="0.5"></label><label for="sp-b">bounce <input type="range" id="sp-b" min="0" max="0.6" step="0.05" value="0.2"></label></div>
+      <div class="ctl" data-g="p" hidden><label for="sp-k">stiffness <input type="range" id="sp-k" min="20" max="800" step="5" value="100"></label><label for="sp-c">damping <input type="range" id="sp-c" min="1" max="60" step="0.5" value="10"></label><label for="sp-m">mass <input type="range" id="sp-m" min="0.2" max="5" step="0.1" value="1"></label></div>
+      <svg class="sp-plot" viewBox="0 0 320 140" preserveAspectRatio="none" aria-hidden="true"><path class="tg" d="M0 40 H320"/><path class="ln" d=""/><text x="4" y="36">target</text><text x="290" y="134">1,6 s</text></svg>
+      <div class="track"><div class="ball"></div></div>
+      <div class="ctl"><button class="btn small primary" type="button" data-go>Avvia (inverti)</button><span class="out"></span></div></div>`);
+    let mode = 'a'; const ball = $('.ball', b), track = $('.track', b), out = $('.ctl .out', b);
+    const P = () => mode === 'a' ? apple(+$('#sp-d', b).value, +$('#sp-b', b).value) : { k: +$('#sp-k', b).value, c: +$('#sp-c', b).value, m: +$('#sp-m', b).value };
+    const sp = new Spring(P(), 0, x => { ball.style.transform = `translateX(${x}px)`; }, 0.3);
+    let side = 0;
+    const draw = () => { const p = P(); sp.params(p); const { pts, settle } = simulate(p);
+      $('.ln', b).setAttribute('d', 'M0 120 ' + pts.map(([t, x]) => `L${(t / 1.6 * 320).toFixed(1)} ${(120 - x * 80).toFixed(1)}`).join(' '));
+      const z = p.c / (2 * Math.sqrt(p.k * p.m));
+      out.textContent = `k ${p.k.toFixed(0)} · c ${p.c.toFixed(1)} · m ${p.m} · ζ ${z.toFixed(2)} · si ferma ≈ ${Math.round(settle * 1000)}ms`; };
+    $$('input', b).forEach(i => i.oninput = draw);
+    const setMode = m => { mode = m; $$('.seg button', b).forEach(x => x.setAttribute('aria-pressed', String(x.dataset.m === m))); $$('[data-g]', b).forEach(g => g.hidden = g.dataset.g !== m); draw(); };
+    $$('.seg button', b).forEach(x => x.onclick = () => setMode(x.dataset.m));
+    const presets = [
+      ['Emil · Apple-style', 'a', { d: 0.5, b: 0.2 }], ['Critico (bounce 0)', 'a', { d: 0.4, b: 0 }], ['Apple drawer', 'a', { d: 0.3, b: 0.2 }],
+      ['Emil · fisica', 'p', { k: 100, c: 10, m: 1 }], ['Il tuo MOTION.smoothing', 'p', { k: 120, c: 20, m: 0.6 }]];
+    presets.forEach(([n, m, v]) => { const x = el(`<button class="btn small" type="button">${n}</button>`); x.onclick = () => {
+      if (m === 'a') { $('#sp-d', b).value = v.d; $('#sp-b', b).value = v.b; } else { $('#sp-k', b).value = v.k; $('#sp-c', b).value = v.c; $('#sp-m', b).value = v.m; }
+      setMode(m); }; $('.presets', b).append(x); });
+    $('[data-go]', b).onclick = () => { side = side ? 0 : 1; sp.to(side * Math.max(0, track.clientWidth - 44)); };
+    draw();
+    return card('Laboratorio spring', 'Apple: duration + bounce. Fisica: stiffness, damping, mass.', b, 'La conversione Apple → fisica qui è un\'approssimazione (ζ = 1 − bounce). “Il tuo MOTION.smoothing” è il valore che usi in micro-interactions per il tilt.');
+  },
+
+  mouse() {
+    const col = (lab) => `<div class="p"><span class="lab-l">${lab}</span><div class="tilt-wrap"><div class="tilt">muovi qui</div></div></div>`;
+    const b = el(`<div class="ab">${col('A · legato al puntatore')}${col('B · useSpring (k100, c10)')}</div>`);
+    $$('.p', b).forEach((p, i) => { const w = $('.tilt-wrap', p), t = $('.tilt', p); let rx = 0, ry = 0;
+      const apply = () => { t.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`; };
+      const sx = new Spring({ k: 100, c: 10, m: 1 }, 0, v => { rx = v; apply(); }, 0.05), sy = new Spring({ k: 100, c: 10, m: 1 }, 0, v => { ry = v; apply(); }, 0.05);
+      const move = e => { const r = w.getBoundingClientRect(); const nx = ((e.clientX - r.left) / r.width) * 2 - 1, ny = ((e.clientY - r.top) / r.height) * 2 - 1;
+        const X = -ny * 14, Y = nx * 18; if (i === 0) { rx = X; ry = Y; apply(); } else { sx.to(X); sy.to(Y); } };
+      w.addEventListener('pointermove', move);
+      const reset = () => { if (i === 0) { rx = 0; ry = 0; apply(); } else { sx.to(0); sy.to(0); } };
+      w.addEventListener('pointerleave', reset); w.addEventListener('pointercancel', reset); });
+    return card('Mouse tracking: diretto o con spring', 'Regola: il valore legato al mouse senza movimento sembra artificiale. È solo decorativo.', b, 'Su un grafico bancario niente spring: il dato non deve “dondolare”.');
+  },
+
+  interrupt() {
+    const b = el(`<div><div class="ir"><span class="lab-l"><span class="x">●</span> keyframes</span><div class="track"><div class="ball"></div></div></div>
+      <div class="ir"><span class="lab-l"><span class="m">●</span> CSS transition</span><div class="track"><div class="ball" style="transition:transform 700ms ${EO}"></div></div></div>
+      <div class="ir"><span class="lab-l"><span class="v">●</span> spring</span><div class="track"><div class="ball"></div></div></div>
+      <div class="btns"><button class="btn primary small" type="button">Inverti direzione</button></div></div>`);
+    const [a, t, s] = $$('.ball', b); let dir = 0; let anim;
+    const sp = new Spring(apple(0.7, 0.1), 0, x => { s.style.transform = `translateX(${x}px)`; });
+    $('.btn', b).onclick = () => { const W = Math.max(0, $('.track', b).clientWidth - 34); dir = dir ? 0 : 1; const from = dir ? 0 : W, to = dir ? W : 0;
+      if (anim) anim.cancel(); anim = play(a, [{ transform: `translateX(${from}px)` }, { transform: `translateX(${to}px)` }], { duration: 700, easing: EO, fill: 'forwards' });
+      t.style.transform = `translateX(${to}px)`; sp.to(to); };
+    return card('Cambia idea a metà', 'Regola: transition e spring ripartono da dove sono. I keyframes ripartono da zero.', b, 'Clicca due volte di fila, velocemente. Il pallino rosso salta all\'inizio. La spring conserva anche la velocità.');
+  },
+
+  press() {
+    const b = el(`<div class="ab"><div class="p"><span class="lab-l"><span class="x">●</span> nessun feedback</span><button class="btn primary nopress" type="button">Salva modifiche</button></div><div class="p"><span class="lab-l"><span class="v">●</span> scale(0.97) · 160ms ease-out</span><button class="btn primary" type="button">Salva modifiche</button></div></div>`);
+    return card('Il bottone ti ha sentito?', 'Regola: transform: scale(0.97) su :active.', b, 'Tieni premuto. B si abbassa: scala anche testo e icone, ed è quello che lo rende fisico.');
+  },
+
+  scale0() {
+    const col = (lab, from) => `<div class="p"><span class="lab-l">${lab}</span><button class="btn small" type="button">Menu ▾</button><div class="drop" style="height:110px">${popMenu('', `transform-origin:top left;opacity:0;transform:scale(${from});transition:opacity 200ms ${EO},transform 200ms ${EO}`)}</div></div>`;
+    const b = el(`<div class="ab">${col('<span class="x">●</span> da scale(0)', 0)}${col('<span class="v">●</span> da scale(0.95) + opacity', 0.95)}</div>`);
+    $$('.p', b).forEach(p => { const pop = $('.pop', p); const from = pop.style.transform; $('button', p).onclick = () => { const o = pop.dataset.o !== '1'; pop.dataset.o = o ? '1' : '0'; pop.style.opacity = o ? 1 : 0; pop.style.transform = o ? 'scale(1)' : from; }; });
+    return card('Da dove nasce un menu', 'Regola: mai da scale(0). Parti da 0.9–0.97 con opacity 0.', b, 'A esce “dal nulla”. B ha già una forma, come un palloncino sgonfio.');
+  },
+
+  origin() {
+    const col = (lab, o) => `<div class="p"><span class="lab-l">${lab}</span><button class="btn small" type="button">Menu ▾</button><div class="drop" style="height:110px">${popMenu('', `transform-origin:${o};opacity:0;transform:scale(.88);transition:opacity 220ms ${EO},transform 220ms ${EO}`)}</div></div>`;
+    const b = el(`<div class="ab">${col('<span class="x">●</span> transform-origin: center', 'center')}${col('<span class="v">●</span> origin sul trigger (top left)', 'top left')}</div>`);
+    $$('.p', b).forEach(p => { const pop = $('.pop', p); $('button', p).onclick = () => { const o = pop.dataset.o !== '1'; pop.dataset.o = o ? '1' : '0'; pop.style.opacity = o ? 1 : 0; pop.style.transform = o ? 'scale(1)' : 'scale(.88)'; }; });
+    return card('Popover che esce dal bottone', 'Regola: popover dal trigger. Eccezione: i modal restano centrati.', b, 'La scala qui è esagerata (0.88) per vederlo. Nel lavoro vero 0.95 basta.');
+  },
+
+  tooltips() {
+    const bar = instant => { const names = ['Grassetto', 'Corsivo', 'Sottolineato', 'Barrato', 'Annulla']; const g = 'BIUS↺';
+      const r = el(`<div class="tt-bar">${names.map((n, i) => `<button class="tt-btn" type="button" aria-label="${n}">${g[i]}<span class="tt" aria-hidden="true">${n}</span></button>`).join('')}</div>`);
+      let timer = 0, cool = 0, warm = false;
+      $$('.tt-btn', r).forEach(btn => { const tip = $('.tt', btn);
+        const show = () => { clearTimeout(timer); clearTimeout(cool); if (instant && warm) { tip.classList.add('instant', 'on'); } else { timer = setTimeout(() => { tip.classList.remove('instant'); tip.classList.add('on'); warm = true; }, 500); } };
+        const hide = () => { clearTimeout(timer); tip.classList.remove('on'); cool = setTimeout(() => { warm = false; }, 400); };
+        btn.addEventListener('pointerenter', show); btn.addEventListener('pointerleave', hide); btn.addEventListener('focus', show); btn.addEventListener('blur', hide); });
+      return r; };
+    const b = el(`<div class="ab"><div class="p"><span class="lab-l"><span class="x">●</span> ritardo + animazione ogni volta</span></div><div class="p"><span class="lab-l"><span class="v">●</span> dopo il primo: istantanei</span></div></div>`);
+    $$('.p', b)[0].append(bar(false)); $$('.p', b)[1].append(bar(true));
+    return card('Tooltip in una toolbar', 'Regola: ritardo iniziale, poi i vicini si aprono subito e senza animazione.', b, 'Scorri col mouse lungo la barra (o usa Tab). Su touch non c\'è hover: questa demo è da desktop.');
+  },
+
+  toast() {
+    const col = (lab, mode) => `<div class="p" data-mode="${mode}"><span class="lab-l">${lab}</span><button class="btn small" type="button">Aggiungi toast</button><div class="ts-area"></div></div>`;
+    const b = el(`<div class="ab">${col('<span class="x">●</span> keyframes', 'k')}${col('<span class="v">●</span> transition (come Sonner)', 't')}</div>`);
+    const slot = i => `translateY(${-i * 12}px) scale(${(1 - i * 0.05).toFixed(2)})`;
+    $$('.p', b).forEach(p => { const area = $('.ts-area', p), mode = p.dataset.mode; const list = []; let n = 0;
+      $('button', p).onclick = () => {
+        const t = el(`<div class="ts">Evento ${++n} salvato</div>`); if (mode === 't') { t.classList.add('ts-tr'); t.style.transform = 'translateY(100%)'; t.style.opacity = '0'; }
+        area.append(t); list.unshift(t); if (list.length > 4) list.pop().remove();
+        list.forEach((x, i) => { x.style.zIndex = String(10 - i); });
+        if (mode === 't') { void t.offsetHeight; list.forEach((x, i) => { x.style.transform = slot(i); x.style.opacity = i > 2 ? '0' : '1'; }); }
+        else list.forEach((x, i) => { const from = i === 0 ? { transform: 'translateY(100%)', opacity: 0 } : { transform: slot(i - 1), opacity: 1 };
+          if (x._a) x._a.cancel(); x._a = play(x, [from, { transform: slot(i), opacity: i > 2 ? 0 : 1 }], { duration: 400, easing: 'ease', fill: 'forwards' }); });
+      }; });
+    return card('Toast aggiunti a raffica', 'Regola: transition per tutto ciò che si attiva velocemente. I keyframes ripartono da zero.', b, 'Clicca 5 volte velocemente su entrambi. A 2× le differenze si vedono meglio.');
+  },
+
+  blur() {
+    const col = (lab, cls) => `<div class="p"><span class="lab-l">${lab}</span><button class="xf ${cls}" type="button"><span>Copia link</span><span class="off">Copiato ✓</span></button></div>`;
+    const b = el(`<div class="ab">${col('<span class="m">●</span> solo opacity', '')}${col('<span class="v">●</span> opacity + blur(2px) + press', 'blur')}</div>`);
+    $$('.xf', b).forEach(x => x.onclick = () => $$('span', x).forEach(s => s.classList.toggle('off')));
+    return card('Crossfade di un\'etichetta', 'Regola: se un crossfade non si assesta, aggiungi un blur leggero.', b, 'Guardalo a 4×. In A vedi due scritte sovrapposte, in B una sola cosa che si trasforma.');
+  },
+
+  starting() {
+    const ok = 'CSSStartingStyleRule' in window;
+    const b = el(`<div><div class="ctl"><button class="btn small primary" type="button">Mostra toast</button><span class="out">Il tuo browser ${ok ? 'supporta' : 'non supporta'} @starting-style${ok ? ' ✓' : ': il toast appare senza animazione'}</span></div><div class="ss-area"></div></div>`);
+    $('.btn', b).onclick = () => { const t = el('<div class="ss-toast">Nuovo messaggio da Giulia</div>'); $('.ss-area', b).append(t);
+      setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 450 * S); }, 1600 * S); };
+    return card('@starting-style: entrata senza JS', 'Regola: sostituisce il pattern useEffect → mounted.', b, 'Il CSS di questo toast è identico all\'esempio nella skill: opacity e translateY(100%) dentro @starting-style.');
+  },
+
+  pct() {
+    const col = (lab, closed) => `<div class="p"><span class="lab-l">${lab}</span><div class="phone"><div class="drawer" style="transform:${closed};transition:transform 500ms ${ED}" data-c="${closed}"><div class="handle"></div><p><b>Impostazioni rapide</b></p><div class="more" hidden><p>Wi-Fi</p><p>Bluetooth</p><p>Hotspot</p><p>Luminosità</p><p>Non disturbare</p></div></div></div></div>`;
+    const b = el(`<div><div class="ctl"><button class="btn small primary" type="button" data-o>Apri / chiudi</button><label for="pct-l"><input type="checkbox" id="pct-l"> contenuto lungo</label></div><div class="ab">${col('<span class="x">●</span> translateY(120px)', 'translateY(120px)')}${col('<span class="v">●</span> translateY(100%)', 'translateY(100%)')}</div></div>`);
+    let open = false;
+    $('[data-o]', b).onclick = () => { open = !open; $$('.drawer', b).forEach(d => d.style.transform = open ? 'translateY(0)' : d.dataset.c); };
+    $('#pct-l', b).onchange = e => $$('.more', b).forEach(m => m.hidden = !e.target.checked);
+    return card('Nascondere un drawer di altezza variabile', 'Regola: translateY(100%) si muove della propria altezza, qualunque sia.', b, 'Attiva “contenuto lungo” con i drawer chiusi: A spunta fuori dal fondo.');
+  },
+
+  orbit() {
+    const b = el(`<div><div class="orbit${RM() ? '' : ' playing'}"><div class="center"></div><div class="moon"></div></div><div class="btns" style="margin-top:10px"><button class="btn small" type="button">Avvia / ferma</button></div></div>`);
+    $('.btn', b).onclick = () => $('.orbit', b).classList.toggle('playing');
+    return card('Orbita 3D solo con CSS', 'Regola: rotateY + translateZ + preserve-3d per profondità vera.', b, 'Sono gli stessi keyframes della skill. Il pallino passa dietro e davanti: è 3D, non un\'ellisse.');
+  },
+
+  hold() {
+    const col = (lab, cls) => `<div class="p"><span class="lab-l">${lab}</span><button class="hold ${cls}" type="button"><span>Tieni premuto per eliminare</span><span class="ov" aria-hidden="true">Tieni premuto per eliminare</span></button><span class="out">–</span></div>`;
+    const b = el(`<div class="ab">${col('<span class="x">●</span> simmetrico: 2s e 2s', 'hold-a')}${col('<span class="v">●</span> 2s linear · rilascio 200ms ease-out', 'hold-b')}</div>`);
+    $$('.p', b).forEach(p => { const btn = $('.hold', p), ov = $('.ov', p), out = $('.out', p);
+      ov.addEventListener('transitionend', e => { if (e.propertyName === 'clip-path' && btn.matches(':active')) out.textContent = 'eliminato ✓'; });
+      btn.addEventListener('pointerdown', () => { out.textContent = 'tieni…'; });
+      btn.addEventListener('pointerup', () => { if (out.textContent === 'tieni…') out.textContent = 'annullato'; });
+      btn.addEventListener('contextmenu', e => e.preventDefault()); });
+    return card('Tieni premuto per eliminare', 'Regola: lento dove l\'utente decide, veloce dove il sistema risponde.', b, 'Premi e lascia a metà. In A il rosso torna indietro lentamente, come se il sistema esitasse.');
+  },
+
+  tabs() {
+    const names = ['Issue', 'Progetti', 'Cicli', 'Viste'];
+    const list = () => names.map((n, i) => `<button type="button" data-i="${i}">${n}</button>`).join('');
+    const b = el(`<div class="ab"><div class="p"><span class="lab-l"><span class="m">●</span> colore animato tab per tab</span><div class="tabs tabs-a">${list()}</div></div><div class="p"><span class="lab-l"><span class="v">●</span> copia ritagliata con clip-path</span><div class="tabs tabs-b">${list()}<div class="copy" aria-hidden="true">${list()}</div></div></div></div>`);
+    const A = $('.tabs-a', b); $$('button', A)[0].classList.add('on');
+    $$('button', A).forEach(x => x.onclick = () => { $$('button', A).forEach(y => y.classList.toggle('on', y === x)); });
+    const B = $('.tabs-b', b), copy = $('.copy', B); let cur = 0;
+    const clip = () => { const tb = $$(':scope > button', B)[cur]; if (!tb) return; const L = tb.offsetLeft, R = B.clientWidth - (tb.offsetLeft + tb.offsetWidth); copy.style.clipPath = `inset(3px ${R}px 3px ${L}px round 8px)`; };
+    $$(':scope > button', B).forEach(x => x.onclick = () => { cur = +x.dataset.i; clip(); });
+    requestAnimationFrame(() => { copy.style.transition = 'none'; clip(); void copy.offsetWidth; copy.style.transition = ''; });
+    if (window.ResizeObserver) new ResizeObserver(() => clip()).observe(B);
+    return card('Tab con cambio colore perfetto', 'Regola: duplica la lista in stile attivo e anima il clip-path.', b, 'A 4×: in A testo e sfondo cambiano in due tempi; in B si muovono insieme, perché è un solo elemento che si rivela.');
+  },
+
+  compare() {
+    const b = el(`<div><div class="cmp"><div class="lay after">dopo</div><div class="lay before">prima</div></div><div class="ctl" style="margin:12px 0 0"><label for="cmp-r">Divisore <input type="range" id="cmp-r" min="0" max="100" value="50"></label></div></div>`);
+    const top = $('.before', b), r = $('#cmp-r', b); const set = () => { top.style.clipPath = `inset(0 ${100 - r.value}% 0 0)`; }; r.oninput = set; set();
+    return card('Slider prima / dopo', 'Regola: clip-path: inset(0 X% 0 0) sull\'immagine sopra. Nessun DOM in più.', b);
+  },
+
+  reveal() {
+    const b = el(`<div><div class="ctl"><button class="btn small primary" type="button">Rivela / nascondi</button></div><div class="reveal"></div></div>`);
+    $('.btn', b).onclick = () => $('.reveal', b).classList.toggle('on');
+    return card('Reveal con clip-path', 'Regola: da inset(0 0 100% 0) a inset(0 0 0 0). Solo per pagine marketing, una volta.', b);
+  },
+
+  stagger() {
+    const b = el(`<div><div class="ctl"><label for="stg-r">Ritardo tra righe <input type="range" id="stg-r" min="0" max="200" step="10" value="50"></label><span class="out"></span><button class="btn small primary" type="button">Riproduci</button></div><div class="stg">${['Nuova issue assegnata', 'Ciclo 14 iniziato', 'Commento di Marta', 'Progetto archiviato', 'Due PR da rivedere', 'Build verde'].map(t => `<div>${t}</div>`).join('')}</div></div>`);
+    const r = $('#stg-r', b), out = $('.out', b);
+    const lab = () => { const v = +r.value; out.textContent = v + 'ms · ' + (v === 0 ? 'tutto insieme' : v < 30 ? 'quasi insieme' : v <= 80 ? 'consigliato ✓' : `lento: l'ultima riga parte dopo ${v * 5}ms`); };
+    r.oninput = lab; lab();
+    $('.btn', b).onclick = () => $$('.stg div', b).forEach((d, i) => play(d, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: EO, delay: i * +r.value, fill: 'backwards' }));
+    return card('Stagger di una lista', 'Regola: 30–80ms tra gli elementi. Decorativo: non blocca mai l\'interazione.', b);
+  },
+
+  sheet() {
+    const b = el(`<div><div class="ctl"><label for="sh-v"><input type="checkbox" id="sh-v" checked> chiudi con un flick (velocità &gt; 0.11 px/ms)</label><label for="sh-r"><input type="checkbox" id="sh-r" checked> rubber-band verso l'alto</label></div>
+      <div class="phone tall"><div style="padding:14px"><button class="btn small" type="button">Apri sheet</button></div><div class="sheet"><div class="handle"></div><p><b>Trascina giù</b> per chiudere.</p><p>Prova un colpo corto e veloce, poi tira verso l'alto.</p><p class="out">–</p></div></div></div>`);
+    const sh = $('.sheet', b), out = $('.sheet .out', b); let drag = false, y0 = 0, t0 = 0, base = 0, y = 0, open = false; const trk = tracker();
+    // Una spring guida la posizione: si riprende da dove è sullo schermo e al rilascio eredita la velocità del dito.
+    const sp = new Spring(apple(0.45, 0), 0, v => { y = v; sh.style.transform = `translateY(${v}px)`; });
+    $('.phone .btn', b).onclick = () => { if (!sp.raf && !open) sp.jump(sh.offsetHeight); open = true; sp.params(apple(0.45, 0)); sp.to(0); };
+    sh.addEventListener('pointerdown', e => { if (drag || !open) return; drag = true; sp.stop(); base = y; y0 = e.clientY; t0 = performance.now(); trk.reset(); trk.add(e.clientY); sh.setPointerCapture(e.pointerId); sh.classList.add('dragging'); });
+    sh.addEventListener('pointermove', e => { if (!drag) return; trk.add(e.clientY); let ny = base + e.clientY - y0; if (ny < 0) ny = $('#sh-r', b).checked ? -rubber(-ny, sh.offsetHeight) : 0; sp.jump(ny); });
+    const end = () => { if (!drag) return; drag = false; sh.classList.remove('dragging');
+      // Apple: chiudere o tornare si decide dal segno della velocità al rilascio, non dalla posizione.
+      const moved = y - base, vNow = trk.v(), flick = Math.abs(vNow) > 0.11;
+      let close = y >= sh.offsetHeight * 0.5, why = close ? 'chiuso per distanza' : 'torna su';
+      if (flick && vNow < 0) { close = false; why = 'flick verso l\'alto → resta aperto'; }
+      else if (flick && vNow > 0 && $('#sh-v', b).checked) { close = true; why = 'chiuso per velocità'; }
+      open = !close;
+      sp.params(flick ? apple(0.3, 0.2) : apple(0.45, 0)); // un po' di rimbalzo solo se il gesto aveva slancio
+      sp.to(open ? 0 : sh.offsetHeight, vNow * 1000);
+      out.textContent = `${Math.round(moved)}px · ${vNow.toFixed(2)} px/ms → ${why}`; };
+    sh.addEventListener('pointerup', end); sh.addEventListener('pointercancel', end);
+    return card('Drag to dismiss', 'Regola: chiudi per velocità, non solo per distanza. Pointer capture, multi-touch, rubber-band. Riprendi da dove si trova.', b, 'Da telefono si sente meglio. Togli il flick e prova a chiudere con un colpo corto: non basta più. Poi lascialo e riprendilo mentre torna su: non salta.');
+  },
+
+  rubber() {
+    const row = (lab, rb) => `<div><span class="lab-l">${lab}</span><div class="rb" data-rb="${rb}"><div class="knob"></div></div></div>`;
+    const b = el(`<div>${row('<span class="x">●</span> muro: si ferma di colpo', 0)}${row('<span class="v">●</span> rubber-band (Apple, c = 0.55)', 1)}</div>`);
+    $$('.rb', b).forEach(r => { const k = $('.knob', r); let drag = false, x0 = 0, base = 0; const trk = tracker();
+      const sp = new Spring(apple(0.45, 0), 0, v => { k.style.transform = `translateX(${v}px)`; });
+      const max = () => Math.max(0, r.clientWidth - 44);
+      k.addEventListener('pointerdown', e => { if (drag) return; drag = true; sp.stop(); base = sp.x; x0 = e.clientX; trk.reset(); trk.add(e.clientX); k.setPointerCapture(e.pointerId); });
+      k.addEventListener('pointermove', e => { if (!drag) return; trk.add(e.clientX); let nx = base + e.clientX - x0; const M = max();
+        if (nx < 0) nx = r.dataset.rb === '1' ? -rubber(-nx, r.clientWidth) : 0; else if (nx > M) nx = r.dataset.rb === '1' ? M + rubber(nx - M, r.clientWidth) : M;
+        sp.jump(nx); });
+      const end = () => { if (!drag) return; drag = false; sp.to(Math.min(Math.max(sp.x, 0), max()), trk.v() * 1000); };
+      k.addEventListener('pointerup', end); k.addEventListener('pointercancel', end); });
+    return card('Bordo morbido', 'Regola: oltre il limite resisti progressivamente, non fermarti di colpo.', b, 'Trascina il quadrato oltre i bordi.');
+  },
+
+  projection() {
+    const b = el(`<div><div class="ctl"><span class="seg" role="group" aria-label="Proiezione"><button type="button" data-p="0" aria-pressed="false">Snap dal punto di rilascio</button><button type="button" data-p="1" aria-pressed="true">Proiezione del momentum</button></span><span class="out">–</span></div><div class="car"><div class="car-t">${[1, 2, 3, 4, 5, 6].map(n => `<div>${n}</div>`).join('')}</div></div></div>`);
+    let proj = true; const tr = $('.car-t', b), car = $('.car', b), out = $('.out', b); const step = 172; let drag = false, x0 = 0, base = 0; const trk = tracker();
+    const sp = new Spring(apple(0.5, 0), 0, v => { tr.style.transform = `translateX(${v}px)`; });
+    $$('.seg button', b).forEach(s => s.onclick = () => { proj = s.dataset.p === '1'; $$('.seg button', b).forEach(y => y.setAttribute('aria-pressed', String(y === s))); });
+    const minX = () => -(step * 5);
+    car.addEventListener('pointerdown', e => { if (drag) return; drag = true; sp.stop(); base = sp.x; x0 = e.clientX; trk.reset(); trk.add(e.clientX); car.setPointerCapture(e.pointerId); });
+    car.addEventListener('pointermove', e => { if (!drag) return; trk.add(e.clientX); let nx = base + e.clientX - x0; if (nx > 0) nx = rubber(nx, 300); if (nx < minX()) nx = minX() - rubber(minX() - nx, 300); sp.jump(nx); });
+    const end = () => { if (!drag) return; drag = false; const v = trk.v() * 1000; const d = 0.998; const p = proj ? (v / 1000) * d / (1 - d) : 0;
+      const target = Math.min(0, Math.max(minX(), Math.round((sp.x + p) / step) * step));
+      out.textContent = `velocità ${Math.round(v)} px/s · proiezione ${Math.round(p)}px → card ${Math.round(-target / step) + 1}`;
+      sp.params(Math.abs(v) > 110 ? apple(0.3, 0.2) : apple(0.5, 0)); sp.to(target, v); };
+    car.addEventListener('pointerup', end); car.addEventListener('pointercancel', end);
+    return card('Lancia il carosello', 'Regola: scegli lo snap dal punto in cui il gesto sta andando, non da dove l\'hai lasciato.', b, 'Fai un flick veloce in entrambe le modalità. Con la proiezione un colpo piccolo ti porta lontano.');
+  },
+
+  symmetric() {
+    const col = (lab, m) => `<div class="p" data-m="${m}"><span class="lab-l">${lab}</span><button class="btn small" type="button">Apri / chiudi</button><div class="stage"><div class="panel">Dettagli</div></div></div>`;
+    const b = el(`<div class="ab">${col('<span class="x">●</span> entra da destra, esce in basso', 'a')}${col('<span class="v">●</span> entra ed esce da destra', 'b')}</div>`);
+    $$('.p', b).forEach(p => { const pn = $('.panel', p); let open = false;
+      $('button', p).onclick = () => { open = !open;
+        if (open) { if (p.dataset.m === 'a') { pn.style.transition = 'none'; pn.style.transform = 'translateX(110%)'; void pn.offsetWidth; } pn.style.transition = `transform 380ms ${ED}`; pn.style.transform = 'none'; }
+        else pn.style.transform = p.dataset.m === 'a' ? 'translateY(120%)' : 'translateX(110%)'; }; });
+    return card('Da dove esce?', 'Regola: se sparisce in un modo, deve tornare da lì.', b);
+  },
+
+  material() {
+    const tiles = '<div class="tiles"><div class="t1"></div><div class="t2"></div><div class="t3"></div><div class="t1"></div><div class="t2"></div></div>';
+    const b = el(`<div class="ab"><div class="p"><span class="lab-l">opaca, bordo pieno</span><div class="mat"><div class="bar op">Libreria</div>${tiles}</div></div><div class="p"><span class="lab-l">materiale traslucido</span><div class="mat"><div class="bar gl">Libreria</div>${tiles}</div></div></div>`);
+    return card('Barra opaca o materiale', 'Regola: barre come layer traslucidi, col contenuto che scorre sotto.', b, 'Scorri dentro i due riquadri. Se hai attivato “riduci trasparenza” nel sistema, B diventa solida: è voluto.');
+  },
+
+  tracking() {
+    const b = el(`<div><div class="ctl"><label for="tr-s">dimensione <input type="range" id="tr-s" min="12" max="72" value="48"></label><label for="tr-t">tracking <input type="range" id="tr-t" min="-0.06" max="0.08" step="0.005" value="0.05"></label><label for="tr-a"><input type="checkbox" id="tr-a"> regola Apple</label></div><p class="trk-h">Ascolta ovunque</p><p class="out"></p></div>`);
+    const s = $('#tr-s', b), t = $('#tr-t', b), a = $('#tr-a', b), h = $('.trk-h', b), o = $('.out', b);
+    const upd = () => { const sz = +s.value; let tk = +t.value; let lh = 1.4;
+      if (a.checked) { const k = Math.min(1, Math.max(0, (sz - 14) / (48 - 14))); tk = +(0.01 + (-0.025 - 0.01) * k).toFixed(3); lh = +(1.5 + (1.05 - 1.5) * k).toFixed(2); t.value = tk; }
+      h.style.fontSize = sz + 'px'; h.style.letterSpacing = tk + 'em'; h.style.lineHeight = lh; o.textContent = `${sz}px · letter-spacing ${tk}em · line-height ${lh}`; t.disabled = a.checked; };
+    [s, t, a].forEach(i => i.oninput = upd); a.onchange = upd; upd();
+    return card('Tracking per dimensione', 'Regola: titoli grandi con tracking negativo e leading stretto; testo piccolo vicino a 0.', b);
+  },
+
+  wizard() {
+    const steps = ['Deve animarsi?', 'Scopo', 'Strumento', 'Proprietà', 'Curva e durata', 'Interruzione e uscita', 'Reduced motion e hover'];
+    const S8 = {
+      'Command palette (⌘K)': ['100+ volte al giorno, da tastiera. Nessuna animazione: ti fermi qui.'],
+      'Dropdown menu': ['Decine di volte/occasionale: animazione breve.', 'Coerenza spaziale: esce dal trigger.', 'CSS transition (o data-starting-style di Base UI).', 'opacity + transform: scale(0.95 → 1), transform-origin sul trigger.', 'var(--ease-out), 200ms (range 150–250).', 'Transition, quindi si ritargetta. Esce per la stessa via.', 'Reduced: solo opacity. Hover delle voci dentro (hover: hover) and (pointer: fine).'],
+      'Toast': ['Occasionale: animazione standard.', 'Coerenza spaziale: entra ed esce dal basso; evita la comparsa brusca.', 'CSS transition + @starting-style (fallback data-mounted).', 'transform: translateY(100%) + opacity.', 'ease, 400ms: eccezione motivata dalla personalità del componente (Sonner).', 'Transition, mai keyframes: arrivano a raffica. Swipe con chiusura per velocità.', 'Reduced: fade senza traslazione.'],
+      'Celebrazione onboarding': ['Rara, prima volta: qui vive il budget di delight.', 'Delight (permesso solo a questo livello).', 'Motion (spring) o WAAPI.', 'transform e opacity; stagger 30–80ms.', 'Spring con bounce 0.2–0.3.', 'Non blocca mai l\'interazione mentre gira.', 'Reduced: niente movimento, resta un fade.'],
+      'Hover su riga di tabella': ['Decine di volte al giorno: quasi impercettibile o niente.', 'Indicazione di stato (quale riga stai per aprire).', 'CSS transition.', 'Solo background-color.', 'ease, circa 100–150ms, oppure nessuna transizione.', 'Transition: segue il mouse senza ripartire.', 'Dentro (hover: hover) and (pointer: fine).'],
+      'Bottom sheet mobile con drag': ['Occasionale: standard, ma guidato dal dito.', 'Coerenza spaziale + manipolazione diretta.', 'Componente pronto (Vaul) via pick-ui-library, oppure Motion.', 'transform: translateY(%) scritto direttamente sull\'elemento, niente CSS variable.', 'Apertura: var(--ease-drawer) 500ms. Dopo un drag: spring che eredita la velocità.', 'Chiusura per velocità (0.11 px/ms), rubber-band verso l\'alto, pointer capture.', 'Reduced: dissolvenza al posto della slide.']
+    };
+    const b = el(`<div><div class="ctl"><label for="wz-s">Caso <select id="wz-s" class="appsel">${Object.keys(S8).map(k => `<option>${k}</option>`).join('')}</select></label></div><div class="wz"></div><div class="btns" style="margin-top:10px"><button class="btn small primary" type="button" data-n>Rivela il passo successivo</button><button class="btn small" type="button" data-a>Mostra tutto</button></div></div>`);
+    let shown = 0, prev = 0; const wz = $('.wz', b), sel = $('#wz-s', b);
+    const render = () => { const a = S8[sel.value]; wz.innerHTML = steps.map((s, i) => { const v = a[i]; const stop = a.length === 1 && i === 0; const hid = i >= shown; const txt = v || (a.length === 1 ? '—' : '');
+      return `<div class="wz-s ${stop && !hid ? 'stop' : ''} ${hid ? 'hid' : ''}"><span class="n">${i + 1}</span><div><b>${s}</b><span>${hid ? 'Pensaci prima di rivelare.' : esc(txt)}</span></div></div>`; }).join('');
+      // il passo appena rivelato passa da sfocato a nitido invece di cambiare di colpo
+      $$('.wz-s span', wz).slice(prev, shown).forEach((sp, j) => play(sp, RM() ? [{ opacity: 0.4 }, { opacity: 1 }] : [{ filter: 'blur(5px)', opacity: 0.4 }, { filter: 'blur(0)', opacity: 1 }], { duration: 200, easing: 'ease', delay: j * 40, fill: 'backwards' }));
+      prev = shown; };
+    sel.onchange = () => { shown = 0; prev = 0; render(); };
+    $('[data-n]', b).onclick = () => { shown = Math.min(7, shown + 1); render(); };
+    $('[data-a]', b).onclick = () => { shown = 7; render(); };
+    render();
+    return card('La sequenza, caso per caso', 'Prova a rispondere tu a ogni passo, poi rivela.', b);
+  },
+
+  modalrec() {
+    const b = el(`<div><button class="btn small primary" type="button" data-o>Apri modal</button><div class="stage" style="height:200px;margin-top:10px"><div class="bk" style="position:absolute;inset:0;background:rgb(0 0 0 / .35);opacity:0;pointer-events:none;transition:opacity 250ms ${EO}"></div><div class="md0" style="position:absolute;left:50%;top:50%;width:210px;margin:-70px 0 0 -105px;padding:14px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);opacity:0;transform:scale(.96);transform-origin:center;pointer-events:none;transition:opacity 250ms ${EO},transform 250ms ${EO}"><b>Archiviare il ciclo?</b><p style="margin:6px 0 10px;color:var(--muted);font-size:13px">Le issue aperte passano al prossimo.</p><button class="btn small" type="button" data-c>Chiudi</button></div></div></div>`);
+    const bk = $('.bk', b), md = $('.md0', b);
+    const set = o => { bk.style.opacity = o ? 1 : 0; bk.style.pointerEvents = o ? 'auto' : 'none'; md.style.opacity = o ? 1 : 0; md.style.transform = o ? 'scale(1)' : 'scale(.96)'; md.style.pointerEvents = o ? 'auto' : 'none'; };
+    $('[data-o]', b).onclick = () => set(true); $('[data-c]', b).onclick = () => set(false); bk.onclick = () => set(false);
+    return card('Ricetta: modal', 'opacity + scale(0.96), 250ms ease-out, origin al centro, backdrop insieme.', b);
+  },
+
+  accordion() {
+    const items = [['Cos\'è un ciclo?', 'Un periodo di lavoro di una o due settimane con le issue pianificate.'], ['Posso spostare una issue?', 'Sì: trascinala in un altro ciclo o usa il menu azioni.'], ['Cosa succede alle issue aperte?', 'A fine ciclo passano automaticamente al successivo.']];
+    const b = el(`<div class="acc">${items.map(([q, a]) => `<button type="button" aria-expanded="false"><span>${q}</span><span class="pl" aria-hidden="true">+</span></button><div><div class="in">${a}</div></div>`).join('')}</div>`);
+    $$('button', b).forEach(btn => btn.onclick = () => { const c = btn.nextElementSibling; const open = btn.getAttribute('aria-expanded') !== 'true'; btn.setAttribute('aria-expanded', String(open));
+      c.style.height = open ? c.scrollHeight + 'px' : '0px'; c.style.opacity = open ? 1 : 0; });
+    return card('Ricetta: accordion', 'height + opacity, 200ms ease-out, altezza misurata in JS. Una delle poche eccezioni a transform/opacity.', b);
+  },
+
+  busy() {
+    const b = el(`<div><div class="busy-r"><span class="lab-l"><span class="x">●</span> JS + rAF (left)</span><div class="track"><div class="ball" style="background:var(--bad)"></div></div></div>
+      <div class="busy-r"><span class="lab-l"><span class="m">●</span> CSS su left</span><div class="track"><div class="mv-left"></div></div></div>
+      <div class="busy-r"><span class="lab-l"><span class="v">●</span> CSS su transform</span><div class="track"><div class="mv-tf"></div></div></div>
+      <div class="ctl" style="margin-top:12px"><button class="btn primary small" type="button">Blocca il main thread 1,5 s</button><span class="out">–</span></div></div>`);
+    const ball = $('.ball', b), tr = $('.track', b), out = $('.out', b); let t = 0, last = performance.now();
+    // il loop gira solo mentre la demo è in riproduzione: in pausa non occupa il main thread
+    let raf = 0; const start = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); } };
+    const pb = el('<button class="btn small" type="button">Avvia / ferma</button>'); pb.onclick = () => { b.classList.toggle('playing'); start(); }; $('.ctl', b).prepend(pb);
+    function loop(now) { raf = 0; if (!b.isConnected || !b.classList.contains('playing')) return; t += (now - last) / 1000 / S; last = now; const W = Math.max(0, tr.clientWidth - 34); const k = (Math.sin(t * Math.PI / 1.6 - Math.PI / 2) + 1) / 2; ball.style.left = (5 + k * W) + 'px'; raf = requestAnimationFrame(loop); }
+    if (!RM()) b.classList.add('playing'); start();
+    const setW = () => { const W = Math.max(0, tr.clientWidth - 34); $('.mv-tf', b).style.setProperty('--w', W + 'px'); }; setW();
+    if (window.ResizeObserver) new ResizeObserver(setW).observe(tr);
+    $('.btn', b).onclick = () => { out.textContent = 'bloccato…'; setTimeout(() => { const end = performance.now() + 1500; while (performance.now() < end) {} out.textContent = 'sbloccato. Chi si è fermato?'; }, 60); };
+    return card('Quando il main thread è occupato', 'Regola: CSS e WAAPI su transform girano fuori dal main thread. Un loop rAF no.', b, 'Durante il blocco i primi due si fermano. Il verde continua: è sul compositor. Succede così durante caricamenti e hydration.');
+  },
+
+  reduced() {
+    const mq = matchMedia('(prefers-reduced-motion: reduce)');
+    const b = el(`<div><div class="ctl"><label for="rm-s"><input type="checkbox" id="rm-s"> simula reduced motion</label><span class="out">Il tuo sistema: ${mq.matches ? 'reduce' : 'no-preference'}</span><button class="btn small primary" type="button">Apri / chiudi</button></div><div class="stage"><div class="panel">Pannello laterale</div></div></div>`);
+    const pn = $('.panel', b), sim = $('#rm-s', b); sim.checked = mq.matches; let open = false;
+    const set = () => { const r = sim.checked; pn.style.transition = r ? 'opacity 200ms ease' : `transform 380ms ${ED}`; pn.style.transform = r ? 'none' : (open ? 'none' : 'translateX(110%)'); pn.style.opacity = r ? (open ? 1 : 0) : 1; };
+    sim.onchange = () => { pn.style.transition = 'none'; set(); };
+    $('.btn', b).onclick = () => { open = !open; set(); }; pn.style.transition = 'none'; set();
+    return card('Reduced motion: meno, non zero', 'Regola: via movimento e posizione, resta l\'opacità che aiuta a capire.', b);
+  },
+
+  hover() {
+    const mq = matchMedia('(hover: hover) and (pointer: fine)');
+    const b = el(`<div><p class="out" style="margin:0 0 10px">Questo dispositivo: (hover: hover) and (pointer: fine) = ${mq.matches ? 'vero, hai un mouse' : 'falso, schermo touch'}</p><div class="ab"><div class="p"><span class="lab-l"><span class="x">●</span> :hover senza media query</span><div class="hc hc-a" tabindex="0">Tocca o passa sopra</div></div><div class="p"><span class="lab-l"><span class="v">●</span> :hover protetto</span><div class="hc hc-b" tabindex="0">Tocca o passa sopra</div></div></div></div>`);
+    return card('Hover appiccicoso', 'Regola: @media (hover: hover) and (pointer: fine) attorno agli hover animati.', b, 'Da telefono: tocca A e poi lo sfondo. A resta sollevata. B no.');
+  },
+
+  spot() {
+    const items = [
+      ['.dropdown {\n  transition: all 300ms ease-in;\n}', 'Blocca', 'transition: all 300ms ease-in', 'transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out)', '`all` anima anche quello che non volevi; ease-in sulla UI è un blocco automatico.'],
+      ['.popover[data-starting-style] {\n  opacity: 0;\n  transform: scale(0);\n}', 'Blocca', 'transform: scale(0)', 'transform: scale(0.95)', 'Nulla nasce dal nulla: scale(0) è nella lista dei blocchi.'],
+      ['// Command palette, si apre con ⌘K\n<motion.div\n  initial={{ opacity: 0, y: 8 }}\n  animate={{ opacity: 1, y: 0 }}\n/>', 'Blocca', 'animazione di apertura', 'nessuna animazione', 'Azione da tastiera, 100+ volte al giorno: si apre e basta.'],
+      ['.toast {\n  animation: slideUp 400ms ease;\n}', 'Finding', 'keyframes sul toast', 'transition: transform 400ms ease, opacity 400ms ease + @starting-style', 'I toast arrivano a raffica: i keyframes ripartono da zero, le transition si ritargettano.'],
+      ['.button { transition: transform 160ms var(--ease-out); }\n.button:active { transform: scale(0.97); }', 'Approva', '—', '—', 'Proprietà esplicita, durata da pressione, curva forte, scala nel range.'],
+      ['.card { transition: transform 200ms var(--ease-out); }\n.card:hover { transform: translateY(-4px); }', 'Finding', '.card:hover non protetto', '@media (hover: hover) and (pointer: fine) { .card:hover { … } }', 'Su touch il tap attiva l\'hover e resta appiccicato.'],
+      ['.drawer { height: 0; transition: height 500ms ease; }\n.drawer.open { height: 420px; }', 'Blocca', 'animazione di height', 'transform: translateY(100%) → translateY(0), 500ms var(--ease-drawer)', 'Proprietà di layout facile da sostituire: non-GPU e correggibile, quindi blocco.'],
+      ['.hold .overlay { transition: clip-path 2s linear; }\n.hold:active .overlay { clip-path: inset(0); }', 'Finding', 'stessa durata in pressione e rilascio', 'rilascio: clip-path 200ms var(--ease-out); pressione: 2s linear', 'Tempi simmetrici su pressione e rilascio: il rilascio deve essere scattante.'],
+      ['// indicatore tab durante il cambio pagina\n<motion.div animate={{ x: offset }} />', 'Finding', 'animate={{ x }}', 'animate={{ transform: `translateX(${offset}px)` }} oppure CSS', 'Gli shorthand x/y girano sul main thread: durante la navigazione perdono frame (caso Vercel).'],
+      ['.modal {\n  transform-origin: var(--transform-origin);\n}', 'Finding', 'origin dal trigger sul modal', 'transform-origin: center', 'Il modal non è ancorato a un trigger: resta centrato.'],
+      ['.menu-item {\n  transition: background-color 150ms ease;\n}', 'Approva', '—', '—', 'Cambio di colore: ease va bene, breve, nessun movimento.'],
+      ['/* lista di 40 righe vista tutto il giorno */\n.row {\n  animation: fadeIn 300ms var(--ease-out) backwards;\n  animation-delay: calc(var(--i) * 120ms);\n}', 'Finding', 'stagger da 120ms su 40 righe', 'nessuno stagger (o 30–80ms solo su ingressi occasionali)', 'L\'ultima riga arriva dopo quasi 5 secondi, e la lista si vede di continuo.']
+    ];
+    const b = el(`<div class="spot">${items.map((it, i) => `<div class="sp-i"><pre>${esc(it[0])}</pre><div class="ctl" style="margin:0"><span class="seg" role="group" aria-label="Verdetto">${['Approva', 'Finding', 'Blocca'].map(v => `<button type="button" data-v="${v}" aria-pressed="false">${v}</button>`).join('')}</span><button class="btn small" type="button" data-s>Soluzione</button></div><div class="sp-ans" hidden></div></div>`).join('')}<p class="out" id="spot-score"></p></div>`);
+    const score = () => { let ok = 0, tot = 0; $$('.sp-i', b).forEach((x, i) => { if (x.dataset.pick) { tot++; if (x.dataset.pick === items[i][1]) ok++; } }); $('#spot-score', b).textContent = tot ? `${ok} giusti su ${tot} risposte` : ''; };
+    $$('.sp-i', b).forEach((x, i) => { const it = items[i];
+      $$('.seg button', x).forEach(s => s.onclick = () => { x.dataset.pick = s.dataset.v; $$('.seg button', x).forEach(y => y.setAttribute('aria-pressed', String(y === s))); score(); });
+      $('[data-s]', x).onclick = () => { const a = $('.sp-ans', x); a.hidden = !a.hidden;
+        a.innerHTML = `<span class="verdict ${it[1]}">${it[1]}</span>${x.dataset.pick ? (x.dataset.pick === it[1] ? ' · hai indovinato' : ' · tu: ' + x.dataset.pick) : ''}` + (it[2] === '—' ? `<p style="margin:6px 0 0">${esc(it[4])}</p>` : `<div class="tw"><table><thead><tr><th>Before</th><th>After</th><th>Why</th></tr></thead><tbody><tr><td><code>${esc(it[2])}</code></td><td><code>${esc(it[3])}</code></td><td>${esc(it[4])}</td></tr></tbody></table></div>`); }; });
+    return card('Fai la review', 'Per ogni snippet: Approva, Finding o Blocca. Poi guarda la soluzione nel formato Before | After | Why.', b, 'I verdetti seguono i criteri di blocco di review-animations: regressione del feel, tastiera/alta frequenza, scale(0) o ease-in, animazione non-GPU facile da correggere.');
+  }
+};
+
+/* ---------- giorni ---------- */
+const E = 'skills/emil-design-eng/SKILL.md', AP = 'skills/apple-design/SKILL.md';
+const DAYS = [
+  { title: 'Il vocabolario', time: '40 min', goal: 'Dare un nome a ciò che vedi. Senza nomi non distingui uno scale in da un pop in, né sai chiederlo a un agente o a un designer.',
+    before: 'Leggi una categoria alla volta. Per ogni termine pensa a un posto in cui l\'hai già visto: iOS, Linear, il tuo micro-interactions.',
+    read: [{ f: 'skills/animation-vocabulary/SKILL.md' }], demos: [['gallery', '## Glossary']],
+    task: 'Apri Linear (o un\'app che usi ogni giorno) e il tuo <code>micro-interactions</code>. Scrivi nelle note 10 interazioni con il termine esatto del glossario. Esempio: il tuo Hold è <em>Hold to confirm</em> con <em>asymmetric timing</em>.',
+    check: [['Fade in, scale in e pop in: cosa li distingue?', 'Il fade cambia solo l\'opacità. Lo scale in cresce da più piccolo a pieno, spesso con un fade. Il pop in aggiunge un leggero overshoot: rimbalza in posizione.'],
+      ['Che cos\'è un\'animazione origin-aware?', 'Un elemento che esce dal suo trigger (il popover cresce dal bottone che l\'ha aperto) invece che dal proprio centro, che è il default CSS.'],
+      ['Cosa vuol dire perceptual duration in una spring?', 'Il momento in cui la spring sembra finita, anche se sotto continua ad assestarsi di pochissimo.']] },
+  { title: 'Quando animare (e quando no)', time: '45 min', goal: 'Il punto più importante del corso: prima di decidere come animare, decidi se animare.',
+    before: 'Leggi la filosofia con calma. La tabella delle frequenze è il filtro che userai ogni giorno.',
+    read: [{ f: E, from: '## Core Philosophy', to: '### 3. What easing' }], demos: [['freq', '### 1. Should this animate'], ['purpose', '### 2. What is the purpose']],
+    task: 'Fai l\'inventario di Westcentral: elenca nelle note 10 interazioni con la frequenza (100+ al giorno, decine, occasionale, rara) e lo scopo. Segna quelle che toglieresti.',
+    check: [['Un\'azione si usa 100+ volte al giorno da tastiera. Che animazione le dai?', 'Nessuna. Le azioni avviate da tastiera non si animano mai: Raycast non ha animazione di apertura.'],
+      ['Quali sono gli scopi validi?', 'Coerenza spaziale, indicazione di stato, spiegazione, feedback, evitare un cambio brusco.'],
+      ['“È bello” è uno scopo?', 'Solo se l\'utente la vede raramente. Su un elemento frequente no: non animare.']] },
+  { title: 'Easing e durata', time: '50 min', goal: 'Scegliere la curva e la durata con una regola, non a occhio.',
+    before: 'Usa lo slow-mo in alto a 4×: il primo frame di un\'animazione dice quasi tutto.',
+    read: [{ f: E, from: '### 3. What easing', to: '## Spring Animations' }], demos: [['easing', '### 3. What easing'], ['duration', '### 4. How fast'], ['spinner', '### Perceived performance']],
+    lab: 3, labTask: '<ol><li>Togli <code>transition: all</code> e nomina le proprietà.</li><li>Sostituisci <code>ease-in</code> con <code>var(--ease-out)</code>.</li><li>Porta la durata nel range dei dropdown (150–250ms).</li><li>Apri e chiudi a 4× e guarda il primo frame.</li></ol>',
+    check: [['Perché ease-in a 300ms sembra più lento di ease-out a 300ms?', 'Ease-in ritarda il movimento iniziale, proprio il momento che l\'utente guarda di più.'],
+      ['Che easing usi per un elemento che si sposta da A a B sullo schermo?', 'Ease-in-out, nella versione forte: cubic-bezier(0.77, 0, 0.175, 1).'],
+      ['Range di un dropdown e limite generale per la UI?', '150–250ms. La UI resta sotto i 300ms.']] },
+  { title: 'Spring e interruzioni', time: '60 min', goal: 'Capire le spring con le mani: cosa fanno stiffness, damping e mass, e perché reggono le interruzioni.',
+    before: 'Stiffness tira, damping frena, mass appesantisce. Nel laboratorio spring c\'è anche il tuo MOTION.smoothing.',
+    read: [{ f: E, from: '## Spring Animations', to: '## Component Building Principles' }], demos: [['mouse', '### Spring-based mouse'], ['springlab', '### Spring configuration'], ['interrupt', '### Interruptibility advantage']],
+    lab: 4, labTask: '<ol><li>Clicca due volte di fila: lo switch salta.</li><li>Sostituisci i keyframes con una <code>transition</code> su transform.</li><li>Durata 200ms, <code>var(--ease-out)</code>, e anima anche il colore di sfondo.</li></ol>',
+    check: [['Quando scegli una spring invece di una durata?', 'Drag con momentum, elementi che devono sembrare vivi, gesture interrompibili, mouse tracking decorativo.'],
+      ['Cosa guadagni con una spring se l\'utente interrompe a metà?', 'Mantiene la velocità e riparte dalla posizione attuale. I keyframes ripartono da zero.'],
+      ['Che bounce usi e quando?', '0.1–0.3, e raramente: drag-to-dismiss e interazioni giocose. Nella UI normale evitalo.']] },
+  { title: 'Bottoni, origine, tooltip', time: '50 min', goal: 'I dettagli che nessuno nota singolarmente e che, sommati, fanno sembrare un\'interfaccia giusta.',
+    before: 'Per ogni regola chiediti: nel mio micro-interactions lo faccio già?',
+    read: [{ f: E, from: '## Component Building Principles', to: '### Use CSS transitions over keyframes' }], demos: [['press', '### Buttons must feel'], ['scale0', '### Never animate from scale(0)'], ['origin', '### Make popovers origin-aware'], ['tooltips', '### Tooltips: skip delay']],
+    lab: 5, labTask: '<ol><li>Bottone: feedback su <code>:active</code> (scale 0.97, 160ms).</li><li>Popover: mai da <code>scale(0)</code>; parti da 0.95 con opacity 0.</li><li>Origine sul trigger (<code>top left</code>).</li><li>Curva <code>var(--ease-out)</code>, 200ms, proprietà esplicite.</li></ol>',
+    check: [['Che scala usi su :active?', '0.95–0.98, per esempio 0.97, con circa 160ms ease-out.'],
+      ['Perché non partire da scale(0)?', 'Nulla nel mondo reale appare dal nulla. Parti da 0.9–0.97 con opacity 0.'],
+      ['Quale popover NON deve essere origin-aware?', 'Il modal: non è ancorato a un trigger, resta centrato.']] },
+  { title: 'Transizioni, blur, transform', time: '60 min', goal: 'Rendere le animazioni interrompibili e usare bene transform: percentuali, scala dei figli, 3D.',
+    before: 'Prova sempre a cliccare due volte di fila: è il test di interruttibilità.',
+    read: [{ f: E, from: '### Use CSS transitions over keyframes', to: '## clip-path for Animation' }], demos: [['toast', '### Use CSS transitions over'], ['blur', '### Use blur to mask'], ['starting', '### Animate enter states'], ['pct', '### translateY with percentages'], ['orbit', '### 3D transforms']],
+    lab: 6, labTask: '<ol><li>Chiudi il drawer e attiva “Contenuto lungo”: spunta fuori.</li><li>Nascondilo con <code>translateY(100%)</code>.</li><li>Usa <code>var(--ease-drawer)</code> a 500ms.</li></ol>',
+    check: [['Toast aggiunti a raffica: keyframes o transition?', 'Transition: si ritargettano dal valore attuale. I keyframes ripartono da zero.'],
+      ['Perché il blur aiuta un crossfade, e qual è il limite?', 'Fonde i due stati in una sola trasformazione percepita. Bastano 2px; resta sotto i 20px, che sono costosi soprattutto in Safari.'],
+      ['Perché translateY(100%) invece dei pixel?', 'La percentuale è relativa all\'elemento stesso: funziona con qualsiasi altezza del contenuto.']] },
+  { title: 'clip-path e stagger', time: '60 min', goal: 'Usare clip-path come strumento di animazione e dosare lo stagger.',
+    before: 'clip-path è la quarta proprietà “ammessa” dopo transform e opacity.',
+    read: [{ f: E, from: '## clip-path for Animation', to: '## Gesture and Drag' }, { f: E, from: '## Stagger Animations', to: '## Debugging Animations' }],
+    demos: [['tabs', '### Tabs with perfect'], ['hold', '### Hold-to-delete'], ['reveal', '### Image reveals'], ['compare', '### Comparison sliders'], ['stagger', '## Stagger Animations']],
+    lab: 7, labTask: '<ol><li>Scrivi da zero il pattern hold-to-delete.</li><li>Overlay nascosto con <code>clip-path: inset(0 100% 0 0)</code>.</li><li>Pressione: 2s <code>linear</code>. Rilascio: 200ms <code>var(--ease-out)</code>.</li><li>Aggiungi <code>scale(0.97)</code> sul bottone.</li></ol>',
+    check: [['Hold-to-delete: tempi di pressione e rilascio?', 'Pressione 2s linear, perché l\'utente sta decidendo. Rilascio 200ms ease-out, perché il sistema risponde.'],
+      ['Come ottieni un cambio colore perfetto nelle tab?', 'Duplichi la lista in stile attivo, la ritagli con clip-path sulla tab attiva e animi il clip.'],
+      ['Che stagger usi?', '30–80ms tra gli elementi. È decorativo: non blocca mai l\'interazione.']] },
+  { title: 'Gesture e drag', time: '70 min', goal: 'Far sembrare fisico un trascinamento: velocità, momentum, bordi morbidi.',
+    before: 'Le gesture si sentono con le dita: apri questa pagina anche dal telefono.',
+    read: [{ f: E, from: '## Gesture and Drag', to: '## Performance Rules' }, { f: AP, from: '## The Core Idea', to: '## 4. Behavior' }, { f: AP, from: '## 5. Velocity handoff', to: '## 7. Spatial' }, { f: AP, from: '## 9. Rubber-banding', to: '## 11. Frame-level' }],
+    demos: [['sheet', '### Momentum-based dismissal'], ['projection', '## 6. Momentum projection'], ['rubber', '## 9. Rubber-banding']],
+    lab: 8, labTask: '<ol><li>Pointer capture e protezione multi-touch.</li><li>Rubber-band verso l\'alto invece del muro.</li><li>Chiusura anche per velocità: <code>|dy| / tempo &gt; 0.11</code> px/ms.</li><li>Riprendilo mentre torna su: deve partire dalla posizione reale (<code>getComputedStyle(sheet).transform</code>), non saltare.</li><li>Premi <b>Esegui JS</b> dopo ogni modifica.</li></ol>',
+    check: [['Quando chiudi un drawer trascinato di poco?', 'Quando la velocità (distanza / tempo) supera circa 0.11 px/ms: basta un flick.'],
+      ['Cosa fa il rubber-banding?', 'Oltre il limite l\'elemento segue sempre meno: resistenza progressiva invece di un muro.'],
+      ['Da quale valore deve partire un\'animazione interrotta?', 'Da quello attuale sullo schermo, mai dal target logico, altrimenti salta.']] },
+  { title: 'Apple: molle, spazio, materiali', time: '60 min', goal: 'Il perché fisico dietro le regole: damping e response, percorsi simmetrici, materiali, tipografia.',
+    before: 'È il testo delle WWDC tradotto per il web. Qui conta il perché.',
+    read: [{ f: AP, from: '## 4. Behavior', to: '## 5. Velocity handoff' }, { f: AP, from: '## 7. Spatial', to: '## 9. Rubber-banding' }, { f: AP, from: '## 11. Frame-level' }],
+    demos: [['springlab', '## 4. Behavior'], ['symmetric', '## 7. Spatial'], ['material', '## 12. Materials'], ['tracking', '## 15. Typography']],
+    lab: 9, labTask: '<ol><li>Barra traslucida: sfondo semitrasparente e <code>backdrop-filter</code>, bordo leggero.</li><li>Fallback per <code>prefers-reduced-transparency</code>.</li><li>Titolo grande: tracking -0.02em e leading 1.05. Testo piccolo vicino a 0.</li></ol>',
+    check: [['Damping 1.0 o 0.8: quando?', '1.0 (nessun overshoot) di default. Circa 0.8 solo se il gesto aveva momentum, come un flick.'],
+      ['Un pannello entra da destra: da dove esce?', 'Da destra. Stesso percorso in entrata e in uscita.'],
+      ['Che tracking usi su un titolo grande?', 'Negativo, circa -0.02em, con leading stretto. Il testo piccolo resta vicino a 0 o poco positivo.']] },
+  { title: 'Il metodo: animate', time: '70 min', goal: 'Mettere insieme tutto in una sequenza di 7 decisioni e partire sempre da una ricetta.',
+    before: 'Tutte le ricette sono live qui sotto: alcune le hai già viste, ora le rileggi come sistema.',
+    read: [{ f: 'skills/animate/SKILL.md' }, { f: 'skills/animate/RECIPES.md' }],
+    demos: [['wizard', '## The Build Sequence'], ['press', '## Button press'], ['origin', '## Dropdown, popover'], ['tooltips', '## Tooltip'], ['modalrec', '## Modal'], ['pct', '## Drawer / sheet'], ['toast', '## Toast'], ['accordion', '## Accordion'], ['stagger', '## Stagger a group'], ['hold', '## Hold to confirm'], ['tabs', '## Tab indicator'], ['reveal', '## Scroll reveal'], ['sheet', '## Drag to dismiss'], ['blur', '## Masking a crossfade']],
+    lab: 10, labTask: '<ol><li>Implementa la ricetta Modal: opacity + transform 250ms <code>var(--ease-out)</code>, scale 0.96, origine al centro.</li><li>Il backdrop sfuma insieme al modal.</li><li>Niente <code>display: none</code>: usa opacity e <code>pointer-events</code>.</li><li>Feedback di pressione sui bottoni.</li></ol>',
+    check: [['Quali sono i primi due passi e perché vengono prima?', 'Deve animarsi? Con quale scopo? Fanno da cancello: a volte la risposta giusta è zero righe di codice.'],
+      ['Che strumento usi per un ingresso al mount senza stato JS?', 'CSS @starting-style: lo strumento più economico che funziona.'],
+      ['Cosa si spedisce insieme all\'animazione, non dopo?', 'Reduced motion e gating dell\'hover.']] },
+  { title: 'Performance', time: '60 min', goal: 'Sapere perché transform e opacity, e dove gira un\'animazione.',
+    before: 'La demo del main thread bloccato va provata due volte.',
+    read: [{ f: 'skills/animation-performance/SKILL.md' }, { f: 'performance-cheatsheet.md' }, { f: E, from: '## Performance Rules', to: '## Accessibility' }], demos: [['busy', '## Where It Runs']],
+    lab: 11, labTask: '<ol><li>Barra: <code>transform: scaleX()</code> con origine a sinistra invece di <code>width</code>; niente <code>all</code>.</li><li>Palla: sostituisci il loop rAF su <code>left</code> con <code>element.animate()</code> su transform.</li><li>Avvia e poi blocca il main thread: cosa continua a muoversi?</li></ol>',
+    check: [['Budget di un frame a 60Hz e a 120Hz?', '16,7ms e 8ms. Progetta sul più piccolo.'],
+      ['Perché un\'animazione CSS su transform continua col main thread bloccato?', 'Gira sul compositor, fuori dal main thread. Un loop rAF invece no.'],
+      ['Un drag diventa lento con molti figli: causa probabile?', 'Una CSS variable sul genitore, che ricalcola lo stile di ogni figlio. Imposta transform direttamente sull\'elemento.']] },
+  { title: 'Accessibilità e mobile', time: '60 min', goal: 'Animazioni che rispettano chi le guarda, e un web che sul telefono sembra nativo.',
+    before: 'Due cose si spediscono con l\'animazione, non dopo: reduced motion e gating dell\'hover.',
+    read: [{ f: E, from: '## Accessibility', to: '## The Sonner Principles' }, { f: 'skills/mobile-native/SKILL.md' }], demos: [['reduced', '### prefers-reduced-motion'], ['hover', '### Touch device hover']],
+    lab: 12, labTask: '<ol><li>Proteggi l\'hover della card con <code>(hover: hover) and (pointer: fine)</code>.</li><li>In <code>prefers-reduced-motion: reduce</code> il pannello usa solo opacity (200ms) e la card non si solleva.</li><li>Verifica in DevTools → Rendering → Emulate prefers-reduced-motion.</li></ol>',
+    check: [['Reduced motion significa zero animazioni?', 'No: meno e più gentili. Togli movimento e posizione, tieni opacity e colore che aiutano a capire.'],
+      ['Come eviti l\'hover appiccicoso su touch?', 'Metti gli :hover animati dentro @media (hover: hover) and (pointer: fine).'],
+      ['Cosa fai prima di dire che una cosa funziona su mobile?', 'La provi su un telefono vero: giusto in Chrome non vuol dire giusto sul telefono.']] },
+  { title: 'Revisione: gli standard', time: '70 min', goal: 'Leggere il codice come un revisore severo: l\'approvazione si guadagna.',
+    before: 'Fai la review qui sotto prima di leggere STANDARDS.md, poi rifalla.',
+    read: [{ f: 'skills/review-animations/SKILL.md' }, { f: 'skills/review-animations/STANDARDS.md' }, { f: E, from: '## The Sonner Principles', to: '## Stagger Animations' }, { f: E, from: '## Debugging Animations' }], demos: [['spot', '## Aggressive Escalation Triggers']],
+    task: 'Senza aiuti, scrivi nelle note la review di <code>lib/motion-tokens.ts</code> e di due componenti del tuo <code>micro-interactions</code>, nel formato Before | After | Why con il verdetto. Solo dopo installa le skill e lancia <code>review-animations</code> sullo stesso codice: confronta cosa hai mancato.<br><br>Installazione: <code>npx skills@latest add emilkowalski/skills</code>',
+    check: [['Quali sono i motivi di Blocca automatico?', 'Regressione che rompe il feel; animazione su tastiera o ad alta frequenza; scale(0) o ease-in sulla UI; animazione non-GPU facile da correggere.'],
+      ['Qual è il primo rimedio della gerarchia?', 'Cancellare l\'animazione.'],
+      ['In che formato si scrive la review?', 'Una tabella Before | After | Why, una riga per problema, poi il verdetto raggruppato per impatto.']] },
+  { title: 'Audit, casi limite, prototipi', time: '90 min, anche in due giorni', goal: 'Le skill di processo: cercare opportunità, fare audit di una codebase, rompere la UI, prototipare varianti, scegliere librerie.',
+    before: 'Servono su codebase vere. Leggile pensando a Westcentral.',
+    read: [{ f: 'skills/find-animation-opportunities/SKILL.md' }, { f: 'skills/improve-animations/SKILL.md' }, { f: 'skills/improve-animations/AUDIT.md' }, { f: 'skills/improve-animations/PLAN-TEMPLATE.md' }, { f: 'skills/break-ui/SKILL.md' }, { f: 'skills/break-ui/CATALOG.md' }, { f: 'skills/prototype/SKILL.md' }, { f: 'skills/prototype/PICKER.md' }, { f: 'skills/pick-ui-library/SKILL.md' }], demos: [],
+    task: 'Scegli un componente reale di Westcentral.<ol><li>Scrivi a mano 3 opportunità di animazione e 3 candidati da rifiutare, con il motivo.</li><li>Prepara 5 casi peggiori secondo break-ui (nome lunghissimo, zero elementi, numeri enormi…).</li><li>Poi lancia <code>find-animation-opportunities</code> e <code>break-ui</code> e confronta con i tuoi.</li></ol>',
+    check: [['Cosa fa find-animation-opportunities che review-animations non fa?', 'Cerca dove manca il movimento e rifiuta ciò che non deve animarsi. È in sola lettura: propone, non implementa.'],
+      ['Cosa produce improve-animations?', 'Un audit con priorità e piani autosufficienti da far eseguire ad altri agenti. Non modifica il codice.'],
+      ['Cosa fa break-ui?', 'Mette dati nel caso peggiore dietro un toggle “Demo data / Worst case” e riporta cosa si rompe, con la correzione.']] }
+];
+
+/* ---------- esercizi da telefono ---------- */
+const POP = '.pop{width:170px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:var(--shadow);padding:6px;font-size:13px}.pop div{padding:5px 8px;border-radius:6px}';
+const MENU = '<div class="pop"><div>Profilo</div><div>Impostazioni</div><div>Esci</div></div>';
+function makeDrills() {
+  const sp = b => { const e = springEasing(apple(0.5, b)); return { label: String(b), css: e.easing, ms: e.ms }; };
+  return {
+    1: [
+      { k: 'name', q: 'Come si chiama questo ingresso?', html: '<div class="st"><div class="box"></div></div>', base: '.st{display:grid;place-items:center;height:110px}.box{width:56px;height:56px;border-radius:14px;background:var(--accent)}',
+        tpl: '.box {\n  animation: in 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;\n}\n@keyframes in { from { opacity: 0; transform: scale(.6); } }', act: 'replay', opts: ['Scale in', 'Pop in', 'Fade in'], ok: 1, why: 'La curva supera 1 (1.56): l\'elemento va oltre la misura finale e rientra. Quell\'overshoot è il pop in.' },
+      { k: 'name', q: 'E questo, con un ritardo diverso per ogni pallino?', html: '<div class="st"><i style="--n:0"></i><i style="--n:1"></i><i style="--n:2"></i><i style="--n:3"></i><i style="--n:4"></i></div>', base: '.st{display:flex;gap:10px;justify-content:center;align-items:center;height:80px}i{width:14px;height:14px;border-radius:50%;background:var(--accent)}',
+        tpl: 'i {\n  animation: up 300ms var(--ease-out) both;\n  animation-delay: calc(var(--n) * 60ms);\n}\n@keyframes up { from { opacity: 0; transform: translateY(10px); } }', act: 'replay', opts: ['Orchestration', 'Delay', 'Stagger'], ok: 2, why: 'Più elementi, uno dopo l\'altro, con un piccolo ritardo costante: è lo stagger.' },
+      { k: 'name', q: 'Il contenuto viene scoperto dall\'alto verso il basso. Il termine?', html: '<div class="img"></div>', base: '.img{height:100px;border-radius:12px;background:linear-gradient(160deg,#3ac3a6,#1f6fd1 60%,#2b2a72)}',
+        tpl: '.img {\n  animation: rv 700ms var(--ease-in-out) both;\n}\n@keyframes rv { from { clip-path: inset(0 0 100% 0); } }', act: 'replay', opts: ['Slide in', 'Reveal', 'Scale in'], ok: 1, why: 'Nulla si sposta: cambia solo la parte visibile, con clip-path. È un reveal.' }
+    ],
+    2: [
+      { k: 'pick', q: 'La command palette si apre con ⌘K, centinaia di volte al giorno. Scegli la transition.', html: '<div class="st"><div class="pal"><div>Cerca un comando…</div><div>Nuova issue</div><div>Vai al progetto</div></div></div>',
+        base: '.st{height:120px}.pal{border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);padding:8px;font-size:13px;opacity:0;transform:scale(.96)}.pal div{padding:5px 8px}.on .pal{opacity:1;transform:none}',
+        tpl: '/* ⌘K, 100+ volte al giorno */\n.pal {\n  transition: {{0}};\n}', blanks: [{ opts: ['opacity 300ms ease, transform 300ms ease', 'none'], ok: 1 }], act: 'toggle', why: 'Azione da tastiera ad altissima frequenza: nessuna animazione. Raycast fa così.' },
+      { k: 'name', q: 'Un toast entra dal basso ed esce dal basso. Qual è lo scopo dell\'animazione?', opts: ['Feedback', 'Coerenza spaziale', 'Spiegazione'], ok: 1, why: 'Stessa via in entrata e in uscita: l\'utente capisce da dove viene e dove va, e lo swipe per chiudere diventa ovvio.' },
+      { k: 'name', q: 'Le righe di una tabella si sollevano all\'hover, decine di volte al giorno, “perché è bello”. Cosa fai?', opts: ['Animazione standard da 250ms', 'La riduci al minimo o la togli', 'Aggiungi un po\' di bounce'], ok: 1, why: 'Decine di volte al giorno e nessuno scopo vero: si riduce drasticamente o si toglie.' }
+    ],
+    3: [
+      { k: 'pick', q: 'Sistema il dropdown: durata e curva.', html: '<div class="st">' + MENU + '</div>', base: '.st{height:118px}' + POP + '.pop{transform-origin:top left;opacity:0;transform:scale(.95)}.on .pop{opacity:1;transform:none}',
+        tpl: '.pop {\n  transition: opacity {{0}} {{1}},\n    transform {{0}} {{1}};\n}', blanks: [{ opts: ['400ms', '80ms', '200ms'], ok: 2 }, { opts: ['ease-in', 'ease', 'var(--ease-out)'], ok: 2 }], act: 'toggle', why: 'Dropdown: 150–250ms con ease-out forte. Movimento subito, arrivo morbido.' },
+      { k: 'pick', q: 'Il pallino si sposta da A a B, già sullo schermo. Che curva?', html: '<div class="t"><i></i></div>', base: '.t{position:relative;width:236px;max-width:100%;height:36px;border-radius:18px;background:var(--sunken)}i{position:absolute;top:6px;left:6px;width:24px;height:24px;border-radius:50%;background:var(--accent)}.on i{transform:translateX(200px)}',
+        tpl: 'i {\n  transition: transform 500ms {{0}};\n}', blanks: [{ opts: ['linear', 'var(--ease-out)', 'var(--ease-in-out)'], ok: 2 }], act: 'toggle', why: 'Movimento da A a B sullo schermo: ease-in-out (forte: 0.77, 0, 0.175, 1). Ease-out è per entrate e uscite.' },
+      { k: 'name', q: 'Due spinner, stesso tempo di caricamento. Quello che gira più veloce fa sembrare l\'attesa…', opts: ['più lunga', 'uguale', 'più breve'], ok: 2, why: 'Performance percepita: la velocità dell\'animazione cambia la sensazione di velocità dell\'app.' }
+    ],
+    4: [
+      { k: 'pick', q: 'Un menu che si apre (nessun gesto prima). Che bounce dai alla spring?', html: '<div class="st">' + MENU + '</div>', base: '.st{height:118px}' + POP + '.pop{transform-origin:top left;opacity:0;transform:scale(.9)}.on .pop{opacity:1;transform:none}',
+        tpl: '// menu che si apre\n{ type: "spring", duration: 0.5, bounce: {{0}} }', ptpl: '.pop{transition:opacity 150ms ease, transform {{0ms}} {{0}}}', blanks: [{ opts: [sp(0.6), sp(0.3), sp(0)], ok: 2 }], act: 'toggle', why: 'Niente bounce nella UI normale: l\'overshoot su un menu che compare sembra sbagliato. Il bounce va bene dopo un flick o un drag.' },
+      { k: 'name', q: 'L\'utente cambia idea a metà animazione. Cosa conserva anche la velocità?', opts: ['Keyframes CSS', 'CSS transition', 'Spring'], ok: 2, why: 'La spring riparte dal punto e dalla velocità attuali. La transition riparte dal punto ma senza velocità, i keyframes da zero.' },
+      { k: 'name', q: 'Cosa rende una spring più rimbalzante?', opts: ['Più damping', 'Meno damping', 'Più mass e più damping'], ok: 1, why: 'Il damping frena: meno damping vuol dire più oscillazione.' }
+    ],
+    5: [
+      { k: 'pick', q: 'Il menu deve uscire dal bottone, non dal nulla.', html: '<div class="st"><span class="tr">Menu ▾</span>' + MENU + '</div>', base: '.st{height:150px}.tr{display:inline-block;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-size:13px;margin-bottom:6px}' + POP + '.pop{opacity:0;transition:opacity 220ms var(--ease-out),transform 220ms var(--ease-out)}.on .pop{opacity:1;transform:scale(1)}',
+        tpl: '.pop {\n  transform: scale({{0}});\n  transform-origin: {{1}};\n}', blanks: [{ opts: ['0', '0.95'], ok: 1 }, { opts: ['center', 'top left'], ok: 1 }], act: 'toggle', why: 'Mai da scale(0): parti da 0.95 con opacity 0. E l\'origine sta sul trigger, in alto a sinistra.' },
+      { k: 'pick', q: 'Premi il bottone. Quanto deve scendere?', html: '<div class="st"><button class="b">Salva</button></div>', base: '.b{padding:12px 24px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:600;transition:transform 160ms var(--ease-out);-webkit-user-select:none;user-select:none}',
+        tpl: '.b:active {\n  transform: scale({{0}});\n}', blanks: [{ opts: ['1', '0.8', '0.97'], ok: 2 }], act: 'none', cap: 'Premi il bottone', why: 'Sottile: 0.95–0.98. A 0.8 sembra rotto, a 1 non ti sente.' },
+      { k: 'name', q: 'Un modal di conferma. Da dove scala?', opts: ['Dal bottone che l\'ha aperto', 'Dal centro'], ok: 1, why: 'Il modal è l\'eccezione: non è ancorato a un trigger, resta centrato.' }
+    ],
+    6: [
+      { k: 'pick', q: 'Il drawer chiuso spunta fuori quando il contenuto è lungo. Correggi.', html: '<div class="ph"><div class="dw"><b>Impostazioni rapide</b><p>Wi-Fi</p><p>Bluetooth</p><p>Hotspot</p><p>Luminosità</p><p>Non disturbare</p></div></div>',
+        base: '.ph{position:relative;height:200px;max-width:240px;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--sunken)}.dw{position:absolute;left:0;right:0;bottom:0;padding:12px 16px;background:var(--surface);border-radius:16px 16px 0 0;font-size:13px;transition:transform 500ms var(--ease-drawer);box-shadow:0 -6px 20px rgb(0 0 0/.12)}.dw p{margin:4px 0}.on .dw{transform:translateY(0)!important}',
+        tpl: '.drawer {\n  transform: translateY({{0}});\n}', ptpl: '.dw{transform:translateY({{0}})}', blanks: [{ opts: ['120px', '100%'], ok: 1 }], act: 'toggle', why: 'translateY(100%) sposta il drawer della sua altezza, qualunque sia il contenuto. È come lo fa Vaul.' },
+      { k: 'pick', q: 'L\'etichetta cambia da “Copia link” a “Copiato ✓”. Quanto blur sullo stato che sparisce? Prova a 4×.', html: '<div class="x"><span class="a">Copia link</span><span class="b">Copiato ✓</span></div>',
+        base: '.x{display:grid;justify-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;width:160px;background:var(--surface)}.x span{grid-area:1/1;transition:opacity 220ms ease,filter 220ms ease}.on .b{opacity:1;filter:none}',
+        tpl: '/* lo stato che sparisce */\n.hidden {\n  opacity: 0;\n  filter: blur({{0}});\n}', ptpl: '.b,.on .a{opacity:0;filter:blur({{0}})}', blanks: [{ opts: ['0px', '24px', '2px'], ok: 2 }], act: 'toggle', why: '2px fondono i due stati in uno. 24px è troppo, e sopra i 20px costa caro, soprattutto in Safari.' }
+    ],
+    7: [
+      { k: 'pick', q: 'Hold-to-delete: tempi di rilascio e di pressione.', html: '<button class="h"><span>Tieni premuto</span><span class="ov" aria-hidden="true">Tieni premuto</span></button>',
+        base: '.h{position:relative;overflow:hidden;padding:12px 18px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-weight:500;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bad);color:var(--on-bad);clip-path:inset(0 100% 0 0)}.h:active .ov{clip-path:inset(0)}',
+        tpl: '.h .ov {          /* rilascio */\n  transition: clip-path {{0}};\n}\n.h:active .ov {   /* pressione */\n  transition: clip-path {{1}};\n}', blanks: [{ opts: ['2s linear', '200ms var(--ease-out)'], ok: 1 }, { opts: ['200ms ease-out', '2s linear'], ok: 1 }], act: 'none', cap: 'Tieni premuto e lascia a metà', why: 'Lento dove l\'utente decide (2s linear, è un progresso), veloce dove il sistema risponde (200ms ease-out).' },
+      { k: 'pick', q: 'Lista di 6 righe vista ogni tanto. Che stagger?', html: '<div class="l"><div style="--n:0">Issue assegnata</div><div style="--n:1">Ciclo iniziato</div><div style="--n:2">Nuovo commento</div><div style="--n:3">PR da rivedere</div><div style="--n:4">Build verde</div><div style="--n:5">Deploy fatto</div></div>',
+        base: '.l{display:flex;flex-direction:column;gap:5px}.l div{padding:6px 10px;border-radius:8px;background:var(--sunken);font-size:13px;animation:up 300ms var(--ease-out) both}@keyframes up{from{opacity:0;transform:translateY(8px)}}',
+        tpl: '.row {\n  animation-delay: calc(var(--n) * {{0}});\n}', ptpl: '.l div{animation-delay:calc(var(--n) * {{0}})}', blanks: [{ opts: ['200ms', '0ms', '50ms'], ok: 2 }], act: 'replay', why: '30–80ms tra gli elementi. A 200ms l\'ultima riga parte dopo un secondo.' }
+    ],
+    8: [
+      { k: 'spot', q: 'Un colpo veloce e corto non chiude il drawer. Tocca la riga responsabile.', lines: ['const dy = e.clientY - startY;', 'sheet.style.transform = `translateY(${dy}px)`;', 'if (dy > sheet.offsetHeight * 0.5) close();', 'sheet.setPointerCapture(e.pointerId);'], ok: 2, why: 'Chiude solo per distanza. Aggiungi la velocità: Math.abs(dy) / tempo > 0.11 px/ms basta per chiudere.' },
+      { k: 'spot', q: 'Con 50 elementi nel drawer il drag diventa lento. Quale riga?', lines: ['drawer.style.setProperty("--swipe", dy + "px");', 'const t = performance.now() - t0;', 'if (dragging) return;'], ok: 0, why: 'Una CSS variable sul genitore ricalcola lo stile di tutti i figli a ogni frame. Scrivi transform direttamente sull\'elemento.' },
+      { k: 'name', q: 'Trascini oltre il bordo. Cosa succede in un\'interfaccia fluida?', opts: ['Si ferma di colpo', 'Segue sempre meno, poi torna', 'Continua senza limiti'], ok: 1, why: 'Rubber-banding: resistenza progressiva, poi ritorno. Un muro sembra un blocco.' }
+    ],
+    9: [
+      { k: 'name', q: 'Un menu appare con un fade. Damping della spring secondo Apple?', opts: ['1.0, nessun overshoot', '0.8, un po\' di rimbalzo'], ok: 0, why: '1.0 di default. 0.8 solo quando il gesto aveva momentum, come un flick.' },
+      { k: 'pick', q: 'Titolo grande da 40px: tracking e leading.', html: '<p class="d">Ascolta ovunque</p>', base: '.d{font-size:40px;font-weight:600;margin:0}',
+        tpl: '.display {\n  font-size: 40px;\n  letter-spacing: {{0}};\n  line-height: {{1}};\n}', ptpl: '.d{letter-spacing:{{0}};line-height:{{1}}}', blanks: [{ opts: ['0.05em', '0', '-0.02em'], ok: 2 }, { opts: ['1.5', '1.05'], ok: 1 }], act: 'none', cap: 'Anteprima', why: 'Testo grande: tracking negativo e leading stretto. Il testo piccolo invece resta vicino a 0 e più arioso.' },
+      { k: 'name', q: 'Un pannello entra da destra. Da dove esce?', opts: ['Dal basso', 'Da destra', 'Con un fade al centro'], ok: 1, why: 'Se sparisce in un modo, deve tornare da lì: stesso percorso.' }
+    ],
+    10: [
+      { k: 'pick', q: 'Ricetta del modal: scala, origine e durata.', html: '<div class="st"><div class="bk"></div><div class="m"><b>Eliminare il progetto?</b><p>Non si può annullare.</p></div></div>',
+        base: '.st{position:relative;height:170px;border-radius:10px;overflow:hidden;background:var(--sunken)}.bk{position:absolute;inset:0;background:rgb(0 0 0/.35);opacity:0;transition:opacity 250ms var(--ease-out)}.on .bk{opacity:1}.m{position:absolute;left:50%;top:50%;width:200px;margin:-50px 0 0 -100px;padding:12px;border-radius:12px;background:var(--surface);box-shadow:var(--shadow);font-size:13px;opacity:0}.m p{margin:4px 0 0;color:var(--muted)}.on .m{opacity:1;transform:scale(1)!important}',
+        tpl: '.modal {\n  transform: scale({{0}});\n  transform-origin: {{1}};\n  transition: opacity {{2}} var(--ease-out),\n    transform {{2}} var(--ease-out);\n}', ptpl: '.m{transform:scale({{0}});transform-origin:{{1}};transition:opacity {{2}} var(--ease-out),transform {{2}} var(--ease-out)}',
+        blanks: [{ opts: ['0', '0.96'], ok: 1 }, { opts: ['top left', 'center'], ok: 1 }, { opts: ['600ms', '250ms'], ok: 1 }], act: 'toggle', why: 'scale(0.96), origine al centro perché il modal non è ancorato, 250ms ease-out.' },
+      { k: 'name', q: 'Un toast deve entrare al mount, senza stato JS. Lo strumento più economico?', opts: ['useEffect + setMounted', 'CSS @starting-style', 'Motion con AnimatePresence'], ok: 1, why: '@starting-style: niente JS. Il pattern data-mounted resta come fallback.' }
+    ],
+    11: [
+      { k: 'spot', q: 'Quale proprietà ricalcola il layout a ogni frame?', lines: ['transform: translateX(200px);', 'opacity: 0.5;', 'left: 200px;', 'filter: drop-shadow(0 4px 8px #0003);'], ok: 2, why: 'left (come top, width, height, margin, padding) passa da layout, paint e composite. Usa translateX.' },
+      { k: 'name', q: 'Un\'ombra animata scatta. Con cosa la sostituisci?', opts: ['will-change: box-shadow', '<code>filter: drop-shadow()</code>', 'transition: all'], ok: 1, why: 'box-shadow ridisegna l\'elemento a ogni frame; filter: drop-shadow() no.' },
+      { k: 'name', q: 'Un indicatore in Framer Motion perde frame durante il cambio pagina. Cosa scrivi?', opts: ['<code>animate={{ x: 100 }}</code>', '<code>animate={{ transform: "translateX(100px)" }}</code>'], ok: 1, why: 'Gli shorthand x/y usano CSS variables e girano sul main thread. La stringa transform può essere accelerata.' }
+    ],
+    12: [
+      { k: 'pick', q: 'Da telefono tocca la card. Quale media query evita che resti sollevata?', html: '<div class="c">Tocca questa card</div>', base: '.c{position:relative;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);transition:transform 200ms var(--ease-out)}.c::after{content:"";position:absolute;inset:-1px;border-radius:inherit;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity 200ms var(--ease-out)}',
+        tpl: '@media {{0}} {\n  .card:hover {\n    transform: translateY(-4px);\n  }\n}', ptpl: '@media {{0}} { .c:hover{transform:translateY(-4px)} .c:hover::after{opacity:1} }', blanks: [{ opts: ['(min-width: 300px)', '(hover: hover) and (pointer: fine)'], ok: 1 }], act: 'none', cap: 'Tocca la card, poi tocca fuori', why: 'Solo i dispositivi con un vero hover e un puntatore preciso ricevono l\'effetto. Su touch niente hover appiccicoso.' },
+      { k: 'name', q: 'In prefers-reduced-motion, il pannello laterale…', opts: ['non si anima affatto', 'appare con solo un fade breve', 'scorre più lentamente'], ok: 1, why: 'Meno e più gentile, non zero: via la traslazione, resta l\'opacità.' }
+    ],
+    13: [
+      { k: 'name', q: 'Verdetto?', tpl: '.dropdown {\n  transition: all 300ms ease-in;\n}', opts: ['Approva', 'Finding', 'Blocca'], ok: 2, why: 'ease-in sulla UI è un blocco automatico, e transition: all anima anche ciò che non volevi.' },
+      { k: 'name', q: 'Verdetto?', tpl: '.hold .overlay { transition: clip-path 2s linear; }\n.hold:active .overlay { clip-path: inset(0); }', opts: ['Approva', 'Finding', 'Blocca'], ok: 1, why: 'Finding di timing: pressione e rilascio sono simmetrici. Il rilascio va a 200ms ease-out.' },
+      { k: 'name', q: 'Verdetto?', tpl: '.button { transition: transform 160ms var(--ease-out); }\n.button:active { transform: scale(0.97); }', opts: ['Approva', 'Finding', 'Blocca'], ok: 0, why: 'Proprietà esplicita, durata da pressione, curva forte, scala nel range: si approva.' }
+    ],
+    14: [
+      { k: 'name', q: 'Vuoi sapere dove aggiungere movimento in Westcentral, senza toccare il codice. Quale skill?', opts: ['review-animations', 'find-animation-opportunities', 'animate'], ok: 1, why: 'Cerca le opportunità, rifiuta ciò che non deve animarsi, ed è in sola lettura.' },
+      { k: 'name', q: 'Vuoi vedere come regge una tabella con nomi lunghissimi e zero righe.', opts: ['break-ui', 'prototype', 'improve-animations'], ok: 0, why: 'break-ui mette i dati nel caso peggiore dietro un toggle e riporta cosa si rompe.' },
+      { k: 'name', q: 'Vuoi tre versioni di un empty state da confrontare con uno switcher.', opts: ['pick-ui-library', 'prototype', 'animate'], ok: 1, why: 'prototype costruisce varianti distinte con un selettore per confrontarle.' }
+    ]
+  };
+}
+let DRILLS = null;
+function fillTpl(t, blanks, sel) { return t.replace(/\{\{(\d+)(ms)?\}\}/g, (m, i, ms) => { const o = blanks[+i].opts[sel[+i]]; if (ms) return (o.ms || 0) + 'ms'; return typeof o === 'string' ? o : o.css; }); }
+function drillPreview(d, getCss) {
+  if (!d.html) return null;
+  const capTxt = d.cap || (d.act === 'toggle' ? 'Anteprima' : d.act === 'replay' ? 'Anteprima' : 'Anteprima');
+  const w = el(`<div class="dr-pv"><p class="cap">${capTxt}</p><div class="host"></div>${d.act === 'toggle' ? '<div class="btns"><button class="btn small" type="button">Apri / chiudi</button></div>' : d.act === 'replay' ? '<div class="btns"><button class="btn small" type="button">Riproduci</button></div>' : ''}</div>`);
+  const root = $('.host', w).attachShadow({ mode: 'open' }); watchSlow(root); root.addEventListener('touchstart', () => {}, { passive: true });
+  let on = false;
+  const update = () => { root.innerHTML = `<style>${LAB_BASE}\n${d.base || ''}\n${getCss()}</style><div class="pv${on ? ' on' : ''}">${d.html}</div>`; };
+  const b = $('.btns .btn', w);
+  if (b && d.act === 'toggle') b.onclick = () => { on = !on; const pv = root.querySelector('.pv'); if (pv) pv.classList.toggle('on', on); };
+  if (b && d.act === 'replay') b.onclick = update;
+  update();
+  return { el: w, update };
+}
+function drillCard(d, i, n) {
+  const c = el(`<div class="dr"><p class="dr-n">Esercizio ${i + 1} di ${n}</p><p class="dr-q">${d.q}</p></div>`);
+  const res = el('<p class="dr-res" aria-live="polite"></p>');
+  if (d.k === 'pick') {
+    const sel = d.blanks.map(() => 0); const code = el('<pre class="dr-code"></pre>');
+    d.tpl.split(/(\{\{\d+\}\})/).forEach(p => { const m = p.match(/^\{\{(\d+)\}\}$/); if (m) code.append(el(`<button type="button" class="chip-b" data-b="${m[1]}"></button>`)); else code.append(document.createTextNode(p)); });
+    const lab = o => typeof o === 'string' ? o : o.label;
+    const paint = () => $$('.chip-b', code).forEach(b => { const bi = +b.dataset.b; b.textContent = lab(d.blanks[bi].opts[sel[bi]]); b.classList.remove('ok', 'no'); b.setAttribute('aria-label', 'Valore: ' + b.textContent + '. Tocca per cambiare'); });
+    const pv = drillPreview(d, () => d.ptpl ? fillTpl(d.ptpl, d.blanks, sel) : fillTpl(d.tpl, d.blanks, sel));
+    $$('.chip-b', code).forEach(b => b.onclick = () => { const bi = +b.dataset.b; sel[bi] = (sel[bi] + 1) % d.blanks[bi].opts.length; paint(); if (pv) pv.update(); res.innerHTML = ''; res.className = 'dr-res'; });
+    c.append(code, el('<p class="dr-hint">Tocca i valori tratteggiati per cambiarli. L\'anteprima usa il codice che vedi.</p>'));
+    if (pv) c.append(pv.el);
+    const bar = el('<div class="btns"><button class="btn small primary" type="button">Controlla</button></div>');
+    $('button', bar).onclick = () => { let all = true;
+      $$('.chip-b', code).forEach(b => { const bi = +b.dataset.b; const ok = sel[bi] === d.blanks[bi].ok; if (!ok) all = false; b.classList.add(ok ? 'ok' : 'no'); });
+      res.className = 'dr-res ' + (all ? 'ok' : 'no');
+      if (all) res.innerHTML = `<b>Giusto.</b> ${d.why}`;
+      else { res.innerHTML = '<b>Non ancora.</b> I valori in rosso vanno cambiati. '; const s = el('<button type="button" class="linkbtn">Mostra la risposta</button>');
+        s.onclick = () => { d.blanks.forEach((bl, bi) => { sel[bi] = bl.ok; }); paint(); if (pv) pv.update(); $$('.chip-b', code).forEach(b => b.classList.add('ok')); res.className = 'dr-res ok'; res.innerHTML = `<b>Risposta.</b> ${d.why}`; enter(res); }; res.append(s); } enter(res); };
+    c.append(bar, res); paint();
+  } else if (d.k === 'name') {
+    if (d.tpl) { const code = el('<pre class="dr-code"></pre>'); code.textContent = d.tpl; c.append(code); }
+    const pv = drillPreview(d, () => d.tpl || ''); if (pv) c.append(pv.el);
+    const ops = el('<div class="dr-opts"></div>');
+    d.opts.forEach((o, oi) => { const b = el(`<button type="button" class="dr-opt">${o}</button>`); b.onclick = () => {
+      $$('.dr-opt', ops).forEach(x => x.classList.remove('ok', 'no')); const ok = oi === d.ok; b.classList.add(ok ? 'ok' : 'no'); if (!ok) $$('.dr-opt', ops)[d.ok].classList.add('ok');
+      res.className = 'dr-res ' + (ok ? 'ok' : 'no'); res.innerHTML = `<b>${ok ? 'Giusto.' : 'No.'}</b> ${d.why}`; enter(res); }; ops.append(b); });
+    c.append(ops, res);
+  } else if (d.k === 'spot') {
+    const box = el('<div></div>');
+    d.lines.forEach((l, li) => { const b = el('<button type="button" class="dr-line"></button>'); b.textContent = l; b.onclick = () => {
+      $$('.dr-line', box).forEach(x => x.classList.remove('ok', 'no')); const ok = li === d.ok; b.classList.add(ok ? 'ok' : 'no'); if (!ok) $$('.dr-line', box)[d.ok].classList.add('ok');
+      res.className = 'dr-res ' + (ok ? 'ok' : 'no'); res.innerHTML = `<b>${ok ? 'Giusto.' : 'No.'}</b> ${d.why}`; enter(res); }; box.append(b); });
+    c.append(box, res);
+  }
+  return c;
+}
+
+/* ---------- markdown ---------- */
+function sliceMd(text, from, to) {
+  const lines = text.replace(/\r/g, '').split('\n');
+  const find = (prefix, start) => { let fence = false; for (let i = start; i < lines.length; i++) { const l = lines[i]; if (/^(```|~~~)/.test(l)) fence = !fence; if (!fence && l.startsWith(prefix)) return i; } return -1; };
+  let s = 0, e = lines.length;
+  if (from) { s = find(from, 0); if (s < 0) return { md: '> Sezione non trovata: ' + from, a: 0, b: 0 }; }
+  else if (lines[0] === '---') { const j = lines.indexOf('---', 1); if (j > 0) s = j + 1; }
+  if (to) { const j = find(to, s + 1); if (j >= 0) e = j; }
+  return { md: lines.slice(s, e).join('\n'), a: s + 1, b: e };
+}
+function chunks(md) {
+  const out = []; let cur = null; let fence = false;
+  md.split('\n').forEach(l => { if (/^(```|~~~)/.test(l)) fence = !fence;
+    if (!fence && /^#{1,6} /.test(l)) { if (cur) out.push(cur); cur = { h: l, lines: [l] }; }
+    else { if (!cur) cur = { h: '', lines: [] }; cur.lines.push(l); } });
+  if (cur) out.push(cur); return out;
+}
+function renderMd(md) {
+  const d = el('<div class="md"></div>');
+  d.innerHTML = window.marked ? marked.parse(md, { gfm: true }) : `<pre>${esc(md)}</pre>`;
+  $$('table', d).forEach(t => { const w = el('<div class="tw"></div>'); t.replaceWith(w); w.append(t); });
+  $$('a', d).forEach(a => { const h = a.getAttribute('href') || ''; if (/^https?:/.test(h)) { a.target = '_blank'; a.rel = 'noopener'; } else { const s = el(`<span class="xref"></span>`); s.textContent = a.textContent; a.replaceWith(s); } });
+  return d;
+}
+
+/* ---------- stato ---------- */
+let store = { done: {}, notes: {} };
+let remote = null, saveT = 0, chain = Promise.resolve();
+const LKEY = 'm14-progress';
+function loadLocal() { const v = ls.get(LKEY); if (v && typeof v === 'object') store = { done: v.done || {}, notes: v.notes || {} }; }
+function setSync(t) { $('#sync').textContent = t; }
+function setSaved(t, err) { const e = $('#saved'); if (!e) return; e.textContent = t; e.classList.toggle('err', !!err); e.classList.add('on'); }
+function save() { ls.set(LKEY, store); clearTimeout(saveT); if (!remote) setSaved('Salvato in questo browser');
+  if (remote) saveT = setTimeout(() => { const body = { done: { ...store.done }, notes: { ...store.notes }, updatedAt: Date.now() };
+    chain = chain.then(() => remote.set(body)).then(() => { setSync('Progressi e note salvati sul tuo account claude.ai.'); setSaved('Salvato sul tuo account'); }).catch(() => { setSync('Salvataggio sull\'account non riuscito: per ora restano in questo browser.'); setSaved('Non salvato sull\'account: resta in questo browser', true); }); }, 700); }
+async function initRemote() {
+  try {
+    if (!window.claude || !window.claude.use) { setSync('Progressi e note salvati in questo browser.'); return; }
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if (!db || !user) { setSync('Progressi e note salvati in questo browser.'); return; }
+    const id = await user.id(); if (!id) { setSync('Progressi e note salvati in questo browser.'); return; }
+    const ref = db.doc(`data/users/${id}/progress`); const snap = await ref.get();
+    if (snap.exists) { const r = snap.data() || {}; const done = { ...(r.done || {}) }; Object.keys(store.done).forEach(k => { if (store.done[k]) done[k] = true; });
+      const notes = { ...(r.notes || {}) }; Object.keys(store.notes).forEach(k => { if (store.notes[k] && !notes[k]) notes[k] = store.notes[k]; });
+      store = { done, notes }; ls.set(LKEY, store); }
+    remote = ref; setSync('Progressi e note salvati sul tuo account claude.ai.');
+    renderNav(); if (cur > 0) { const ta = $('#notes-ta'); if (ta && document.activeElement !== ta) ta.value = store.notes['d' + cur] || ''; const db2 = $('#donebtn'); if (db2) paintDone(); }
+    if (!snap.exists && (Object.keys(store.done).length || Object.keys(store.notes).length)) save();
+  } catch (e) { setSync('Progressi e note salvati in questo browser.'); }
+}
+
+/* ---------- nav ---------- */
+let cur = 0;
+function renderNav() {
+  const l = $('#dayl'); l.innerHTML = '';
+  const intro = el(`<button class="dayb" type="button"><span class="n">00</span><span class="t">Come funziona</span><span></span></button>`); intro.onclick = () => go(0); if (cur === 0) intro.setAttribute('aria-current', 'true'); l.append(intro);
+  DAYS.forEach((d, i) => { const n = i + 1; const b = el(`<button class="dayb ${store.done['d' + n] ? 'done' : ''}" type="button"><span class="n">${String(n).padStart(2, '0')}</span><span class="t">${d.title}</span><span class="c" aria-hidden="true"></span></button>`);
+    b.setAttribute('aria-label', `Giorno ${n}: ${d.title}${store.done['d' + n] ? ', fatto' : ''}`); if (cur === n) b.setAttribute('aria-current', 'true'); b.onclick = () => go(n); l.append(b); });
+  const ap = el(`<button class="dayb" type="button"><span class="n">+</span><span class="t">Tutte le skill</span><span></span></button>`); ap.onclick = () => go(99); if (cur === 99) ap.setAttribute('aria-current', 'true'); l.append(ap);
+  const done = Object.keys(store.done).filter(k => store.done[k]).length; $('#prog').textContent = `${done}/14 giorni`;
+}
+function go(n) { cur = n; ls.set('m14-cur', n); try { history.replaceState(null, '', n === 0 ? '#intro' : n === 99 ? '#skill' : '#g' + n); } catch (e) {} renderNav(); render(); window.scrollTo(0, 0);
+  if (!RM()) play($('#main'), [{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: EO }); }
+$('#home').onclick = () => go(0);
+
+/* ---------- lab ---------- */
+const txt = id => { const s = document.getElementById(id); return s ? s.textContent.replace(/^\n/, '').replace(/\n$/, '') : null; };
+const LAB_BASE = ':host{display:block;font:14px/1.5 var(--f-body);color:var(--fg)} *{box-sizing:border-box} button,input{font:inherit;color:inherit}';
+function buildLab(n, taskHtml) {
+  const start = { html: txt(`l${n}-html`), css: txt(`l${n}-css`), js: txt(`l${n}-js`) };
+  const sol = { html: txt(`l${n}-sol-html`), css: txt(`l${n}-sol-css`), js: txt(`l${n}-sol-js`) };
+  const key = 'm14-lab-' + n; const saved = ls.get(key) || {};
+  const st = { html: saved.html ?? start.html, css: saved.css ?? start.css, js: start.js == null ? null : (saved.js ?? start.js) };
+  let tab = 'css';
+  const w = el(`<div class="lab"><div class="lab-task"><b>Laboratorio.</b> Scrivi tu il codice; l'anteprima si aggiorna da sola.${taskHtml}</div>
+    <div class="lab-grid"><div class="lab-ed"><div class="lab-tabs" role="tablist"></div><textarea id="lab-ta-${n}" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Editor"></textarea></div><div class="lab-pv"><div class="host"></div></div></div>
+    <div class="lab-bar">${st.js != null ? '<button class="btn small primary" type="button" data-run>Esegui JS</button>' : ''}<button class="btn small" type="button" data-reset>Ripristina</button><button class="btn small" type="button" data-sol>Mostra soluzione</button><span class="lab-err"></span></div><div class="lab-sol" hidden></div></div>`);
+  const ta = $('textarea', w), tabs = $('.lab-tabs', w), pv = $('.lab-pv', w), err = $('.lab-err', w), solBox = $('.lab-sol', w);
+  const kinds = ['html', 'css'].concat(st.js != null ? ['js'] : []);
+  const paintTabs = () => { tabs.innerHTML = ''; kinds.forEach(k => { const b = el(`<button type="button" role="tab" aria-selected="${k === tab}">${k.toUpperCase()}</button>`); b.onclick = () => { tab = k; ta.value = st[k]; paintTabs(); }; tabs.append(b); }); };
+  const run = (withJs) => { err.textContent = ''; const host = el('<div class="host"></div>'); pv.replaceChildren(host); const root = host.attachShadow({ mode: 'open' });
+    root.innerHTML = `<style>${LAB_BASE}\n${st.css}</style>${st.html}`; watchSlow(root); root.addEventListener('touchstart', () => {}, { passive: true });
+    if (withJs && st.js) { try { new Function('root', st.js)(root); } catch (e) { err.textContent = 'Errore JS: ' + e.message; } } };
+  let t = 0;
+  ta.addEventListener('input', () => { st[tab] = ta.value; ls.set(key, st); clearTimeout(t); if (tab !== 'js') t = setTimeout(() => run(true), 350); });
+  ta.addEventListener('keydown', e => { if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); const s = ta.selectionStart, en = ta.selectionEnd; ta.setRangeText('  ', s, en, 'end'); ta.dispatchEvent(new Event('input')); } });
+  const rb = $('[data-run]', w); if (rb) rb.onclick = () => run(true);
+  $('[data-reset]', w).onclick = () => { st.html = start.html; st.css = start.css; if (st.js != null) st.js = start.js; ls.set(key, st); ta.value = st[tab]; run(true); };
+  $('[data-sol]', w).onclick = e => { const open = solBox.hidden; solBox.hidden = !open; e.currentTarget.textContent = open ? 'Nascondi soluzione' : 'Mostra soluzione';
+    if (open) { solBox.innerHTML = ''; ['html', 'css', 'js'].forEach(k => { if (sol[k] != null) solBox.append(el(`<div><h4>${k.toUpperCase()} · soluzione</h4><pre>${esc(sol[k])}</pre></div>`)); });
+      const ld = el('<button class="btn small" type="button">Carica la soluzione nell\'editor</button>'); ld.onclick = () => { ['html', 'css', 'js'].forEach(k => { if (sol[k] != null) st[k] = sol[k]; }); ls.set(key, st); ta.value = st[tab]; run(true); }; solBox.append(ld); } };
+  paintTabs(); ta.value = st[tab]; run(true);
+  return w;
+}
+
+/* ---------- render ---------- */
+let view = ls.get('m14-view') || 'fmt';
+function render() {
+  const m = $('#main'); m.innerHTML = '';
+  if (cur === 0) return renderIntro(m);
+  if (cur === 99) return renderAll(m);
+  const d = DAYS[cur - 1]; const n = cur;
+  m.append(el(`<div><p class="eyebrow">Giorno ${String(n).padStart(2, '0')} di 14 · ${d.time}</p><h1 class="dt">${d.title}</h1><p class="goal">${d.goal}</p></div>`));
+  const files = el('<div class="files"></div>'); [...new Set(d.read.map(r => r.f))].forEach(f => files.append(el(`<span class="chip">${esc(f.replace('skills/', ''))}</span>`))); m.append(files);
+  m.append(el(`<p class="before"><b>Prima di leggere</b>${d.before}</p>`));
+  const jump = el(`<div class="jump"></div>`);
+  [['sec-read', 'Lettura'], ['sec-lab', d.lab ? 'Laboratorio' : 'Esercizio'], ['sec-tel', 'Da telefono'], ['sec-chk', 'Verifica'], ['sec-notes', 'Note']].forEach(([id, t]) => {
+    const b = el(`<button class="btn small" type="button">${t}</button>`); b.onclick = () => { const x = document.getElementById(id); if (x) x.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }; jump.append(b); });
+  m.append(jump);
+  const vb = el(`<div class="viewbar" id="sec-read" style="scroll-margin-top:70px"><h2>Il testo di Emil</h2><span class="seg" role="group" aria-label="Vista"><button type="button" data-v="fmt" aria-pressed="${view === 'fmt'}">Formattato + esempi</button><button type="button" data-v="raw" aria-pressed="${view === 'raw'}">Grezzo .md</button></span></div>`);
+  $$('button', vb).forEach(b => b.onclick = () => { view = b.dataset.v; ls.set('m14-view', view); render(); }); m.append(vb);
+  const used = new Set();
+  d.read.forEach(r => { const sl = sliceMd(SK[r.f] || '', r.from, r.to);
+    m.append(el(`<p class="src"><span>${esc(r.f)}</span><span>righe ${sl.a}–${sl.b}</span></p>`));
+    if (view === 'raw') { const p = el('<pre class="raw"></pre>'); p.textContent = sl.md; m.append(p); return; }
+    chunks(sl.md).forEach(c => { m.append(renderMd(c.lines.join('\n')));
+      d.demos.forEach(([id, after], i) => { if (!used.has(i) && c.h && c.h.startsWith(after)) { used.add(i); try { m.append(DEMOS[id]()); } catch (e) { console.error(id, e); } } }); }); });
+  if (view === 'fmt') d.demos.forEach(([id], i) => { if (!used.has(i)) { try { m.append(DEMOS[id]()); } catch (e) { console.error(id, e); } } });
+  if (view === 'raw' && d.demos.length) m.append(el(`<p class="demo-note" style="border-radius:10px;margin-top:12px">Le ${d.demos.length} demo live compaiono nella vista “Formattato + esempi”, accanto alla regola che mostrano.</p>`));
+
+  const ex = el(`<section class="sec" id="sec-lab"><h2>${d.lab ? 'Laboratorio' : 'Esercizio'}</h2></section>`);
+  if (d.task) ex.append(el(`<div class="task">${d.task}</div>`));
+  if (d.lab) { ex.append(el('<p class="lead only-narrow">Il laboratorio si usa meglio da computer. Da telefono vai agli esercizi qui sotto.</p>')); ex.append(buildLab(d.lab, d.labTask)); }
+  m.append(ex);
+  if (!DRILLS) DRILLS = makeDrills();
+  const dl = DRILLS[n] || [];
+  if (dl.length) { const tel = el(`<section class="sec" id="sec-tel"><h2>Da telefono</h2><p class="lead">Solo tocchi, niente tastiera. Il codice è sempre visibile; dove c'è un'anteprima, usa esattamente quel codice.</p><div class="drills"></div></section>`);
+    dl.forEach((x, i) => { try { $('.drills', tel).append(drillCard(x, i, dl.length)); } catch (e) { console.error('drill', n, i, e); } }); m.append(tel); }
+  const ck = el(`<section class="sec chk" id="sec-chk"><h2>Verifica</h2>${d.check.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</section>`); $$('details', ck).forEach(dt => dt.addEventListener('toggle', () => { if (dt.open) enter($('p', dt)); })); m.append(ck);
+  const nt = el(`<section class="sec notes" id="sec-notes"><h2>Note</h2><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px"><label for="notes-ta" class="out">Cosa hai capito, dubbi, interazioni trovate.</label><span class="saved" id="saved" aria-live="polite"></span></div><textarea id="notes-ta"></textarea>
+    <div class="endbar"><button class="btn primary" type="button" id="donebtn"></button>${n < 14 ? `<button class="btn" type="button" id="nextbtn">Giorno ${n + 1}: ${DAYS[n].title} →</button>` : ''}</div></section>`);
+  m.append(nt);
+  const ta = $('#notes-ta'); ta.value = store.notes['d' + n] || '';
+  ta.addEventListener('input', () => { store.notes['d' + n] = ta.value; if (remote) setSaved('Salvataggio…'); save(); });
+  paintDone(); $('#donebtn').onclick = () => { store.done['d' + n] = !store.done['d' + n]; save(); paintDone(); renderNav();
+    // momento raro (14 volte in tutto): qui il budget di delight è permesso
+    if (store.done['d' + n] && !RM()) { const pop = springEasing(apple(0.45, 0.2)); const nb = $$('#dayl .dayb')[n]; const dot = nb && $('.c', nb);
+      const target = dot && dot.offsetParent ? dot : nb; if (target) play(target, [{ transform: 'scale(.6)' }, { transform: 'scale(1)' }], { duration: pop.ms, easing: pop.easing });
+      play($('#donebtn'), [{ transform: 'scale(.94)' }, { transform: 'scale(1)' }], { duration: pop.ms, easing: pop.easing }); } };
+  const nx = $('#nextbtn'); if (nx) nx.onclick = () => go(n + 1);
+}
+function paintDone() { const b = $('#donebtn'); if (!b) return; const done = !!store.done['d' + cur]; b.textContent = done ? 'Fatto ✓ (annulla)' : 'Segna il giorno come fatto'; b.classList.toggle('primary', !done); }
+
+function renderIntro(m) {
+  const lic = SK['LICENSE'] || '';
+  const w = el(`<div class="intro"><p class="eyebrow">Corso di studio personale</p><h1 class="dt">Motion in 14 giorni</h1>
+    <p class="goal">Il testo originale delle skill di Emil Kowalski, un giorno alla volta, con esempi live inseriti subito dopo la regola che mostrano.</p>
+    <div class="btns"><button class="btn primary" type="button" data-start>${Object.keys(store.done).some(k => store.done[k]) ? 'Riprendi' : 'Inizia dal giorno 1'}</button></div>
+    <h2>Com'è fatto un giorno</h2>
+    <ul><li><b>Lettura</b>: le sezioni delle skill, non modificate. Puoi passare dalla vista formattata al file .md grezzo.</li>
+    <li><b>Esempi live</b>: quasi sempre un confronto A/B, sbagliato contro giusto, nel punto esatto del testo.</li>
+    <li><b>Laboratorio</b>: un componente scritto male da correggere. L'anteprima si aggiorna mentre scrivi; la soluzione è nascosta finché non la chiedi.</li>
+    <li><b>Da telefono</b>: due o tre esercizi solo a tocchi. Cambi i valori direttamente nel codice e guardi l'anteprima, scegli la risposta, o tocchi la riga sbagliata.</li>
+    <li><b>Verifica</b>: tre domande con risposta nascosta. <b>Note</b>: le tue, salvate.</li></ul>
+    <p>In alto, <b>Rallenta</b> porta ogni animazione della pagina (anche quelle del laboratorio) a 2× o 4× più lenta. È lo strumento di debug che Emil consiglia: usalo spesso.</p>
+    <h2>Cosa non è</h2>
+    <p>Non è il corso animations.dev. Mancano i suoi 15 walkthrough (drawer di Family, Dynamic Island, menu, SVG), gli esercizi guidati e il Discord. Il testo delle skill è di Emil, sotto licenza MIT; demo, laboratori, domande e ordine dei giorni li ha scritti Claude partendo da quel testo.</p>
+    <h2>Il piano</h2><div class="plan"></div>
+    <h2>Fonte e licenza</h2>
+    <p>Repository <a href="https://github.com/emilkowalski/skills" target="_blank" rel="noopener">github.com/emilkowalski/skills</a>, ramo main, scaricato il 12 ottobre 2026.</p>
+    <div class="lic"></div></div>`);
+  $('.lic', w).textContent = lic;
+  const plan = $('.plan', w);
+  DAYS.forEach((d, i) => { const b = el(`<button type="button"><span class="n">Giorno ${String(i + 1).padStart(2, '0')} · ${d.time}${store.done['d' + (i + 1)] ? ' · fatto ✓' : ''}</span><span class="t">${d.title}</span><span class="f">${[...new Set(d.read.map(r => r.f.split('/')[1] || r.f))].join(', ')}</span></button>`); b.onclick = () => go(i + 1); plan.append(b); });
+  $('[data-start]', w).onclick = () => { const next = DAYS.findIndex((_, i) => !store.done['d' + (i + 1)]); go(next < 0 ? 14 : next + 1); };
+  m.append(w);
+}
+function renderAll(m) {
+  const files = Object.keys(SK).sort();
+  const sel = ls.get('m14-file') || 'skills/emil-design-eng/SKILL.md';
+  const w = el(`<div><p class="eyebrow">Appendice</p><h1 class="dt">Tutte le skill</h1><p class="goal">Ogni file del repository, compresi quelli fuori dal corso (animate-expo, write-swift, ask-sonner).</p>
+    <div class="ctl"><label for="file-sel">File <select id="file-sel" class="appsel">${files.map(f => `<option ${f === sel ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select></label>
+    <span class="seg" role="group" aria-label="Vista"><button type="button" data-v="fmt" aria-pressed="${view === 'fmt'}">Formattato</button><button type="button" data-v="raw" aria-pressed="${view === 'raw'}">Grezzo .md</button></span></div><div class="body"></div></div>`);
+  const body = $('.body', w), s = $('#file-sel', w);
+  const show = () => { const f = s.value; ls.set('m14-file', f); body.innerHTML = ''; const t = SK[f] || '';
+    if (view === 'raw' || !/\.md$/.test(f)) { const p = el('<pre class="raw"></pre>'); p.textContent = t; body.append(p); } else body.append(renderMd(sliceMd(t).md)); };
+  s.onchange = show; $$('.seg button', w).forEach(b => b.onclick = () => { view = b.dataset.v; ls.set('m14-view', view); $$('.seg button', w).forEach(x => x.setAttribute('aria-pressed', String(x === b))); show(); });
+  m.append(w); show();
+}
+
+/* ---------- avvio ---------- */
+loadLocal();
+const h = (location.hash || '').slice(1);
+if (/^g\d+$/.test(h) && +h.slice(1) >= 1 && +h.slice(1) <= 14) cur = +h.slice(1);
+else if (h === 'skill') cur = 99; else if (h === 'intro') cur = 0;
+else { const c = ls.get('m14-cur'); cur = (typeof c === 'number' && (c === 99 || (c >= 0 && c <= 14))) ? c : 0; }
+renderNav(); render(); setSync('Progressi e note salvati in questo browser.');
+initRemote();
+// marked arriva in background: la pagina non aspetta la rete per disegnarsi
+(() => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js';
+  sc.onload = () => { if (cur !== 0 && !document.querySelector('#main .lab textarea:focus, #notes-ta:focus')) { const y = window.scrollY; render(); window.scrollTo(0, y); } };
+  document.head.append(sc); })();
+})();
+</script>
