@@ -16,7 +16,8 @@ export function DayTransition({ n, children }: { n: number; children: React.Reac
   const x = reduce ? 0 : dir * 10;
   return (
     <motion.div
-      initial={{ opacity: 0, transform: `translateX(${x}px)` }}
+      // primo caricamento: nessuna direzione da mostrare, e l'HTML statico non deve uscire con opacity 0
+      initial={dir === 0 ? false : { opacity: 0, transform: `translateX(${x}px)` }}
       animate={{ opacity: 1, transform: "translateX(0px)" }}
       transition={{ duration: 0.15, ease: [0.23, 1, 0.32, 1] }}
     >

@@ -459,3 +459,14 @@ a.btn.primary{color:var(--accent-ink)}
   .segc>button,.plan a{transition:none}
   .segc>button:active,.plan a:active{transform:none}
 }
+
+/* Varianti "giuste" delle demo: con reduced motion resta l'opacità, sparisce il movimento */
+@media (prefers-reduced-motion: reduce){
+  .ss-toast,.ss-toast.out{transform:none}
+  @starting-style{ .ss-toast{transform:none} }
+  .ts-tr{transition:opacity 200ms ease}
+  .drop .pop,.drop .pop.open{transform:none}
+  .tt,.tt.on{transform:translateX(-50%)}
+  .tabs .copy,.reveal{transition:none}
+  .hc-b:hover{transform:none}
+}
