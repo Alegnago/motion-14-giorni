@@ -1,69 +1,74 @@
-import Image from "next/image";
+import Link from "next/link";
+import { DAYS } from "@/lib/days";
+import { readSkill } from "@/lib/skills";
+import { DayTransition } from "@/components/DayTransition";
 
-export default function Home() {
+export default function Intro() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <DayTransition key={0} n={0}>
+      <div className="intro">
+        <p className="eyebrow">Corso di studio personale</p>
+        <h1 className="dt">Motion in 14 giorni</h1>
+        <p className="goal">
+          Il testo originale delle skill di Emil Kowalski, un giorno alla volta, con esempi live inseriti subito dopo la regola che mostrano.
+        </p>
+        <div className="btns">
+          <Link className="btn primary" href="/giorno/1">
+            Inizia dal giorno 1
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <h2>Com&apos;è fatto un giorno</h2>
+        <ul>
+          <li>
+            <b>Lettura</b>: le sezioni delle skill, non modificate. Puoi passare dalla vista formattata al file .md grezzo.
+          </li>
+          <li>
+            <b>Esempi live</b>: quasi sempre un confronto A/B, sbagliato contro giusto, nel punto esatto del testo.
+          </li>
+          <li>
+            <b>Laboratorio</b>: un componente scritto male da correggere. La soluzione resta nascosta finché non la chiedi.
+          </li>
+          <li>
+            <b>Da telefono</b>: esercizi solo a tocchi, con il codice sempre visibile.
+          </li>
+          <li>
+            <b>Verifica</b>: tre domande con risposta nascosta. <b>Note</b>: le tue, salvate in questo browser.
+          </li>
+        </ul>
+        <p>
+          In alto, <b>Rallenta</b> porta ogni animazione della pagina a 2× o 4× più lenta. È lo strumento di debug che Emil consiglia: usalo spesso.
+        </p>
+
+        <h2>Cosa non è</h2>
+        <p>
+          Non è il corso animations.dev. Mancano i suoi walkthrough, gli esercizi guidati e il Discord. Il testo delle skill è di Emil, sotto licenza MIT;
+          demo, laboratori, domande e ordine dei giorni sono scritti a partire da quel testo.
+        </p>
+
+        <h2>Il piano</h2>
+        <div className="plan">
+          {DAYS.map((d, i) => (
+            <Link key={i} href={`/giorno/${i + 1}`}>
+              <span className="n">
+                Giorno {String(i + 1).padStart(2, "0")} · {d.time}
+              </span>
+              <span className="t">{d.title}</span>
+              <span className="f">{[...new Set(d.read.map((r) => r.f.split("/")[1] || r.f))].join(", ")}</span>
+            </Link>
+          ))}
         </div>
-      </main>
-    </div>
+
+        <h2>Fonte e licenza</h2>
+        <p>
+          Repository{" "}
+          <a href="https://github.com/emilkowalski/skills" target="_blank" rel="noopener">
+            github.com/emilkowalski/skills
+          </a>
+          , ramo main, scaricato il 12 ottobre 2026.
+        </p>
+        <div className="lic">{readSkill("LICENSE")}</div>
+      </div>
+    </DayTransition>
   );
 }
